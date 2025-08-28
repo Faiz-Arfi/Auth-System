@@ -1,6 +1,5 @@
 package com.example.authsystembackend.jwt;
 
-import com.example.authsystembackend.repository.UserRepo;
 import com.example.authsystembackend.services.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
