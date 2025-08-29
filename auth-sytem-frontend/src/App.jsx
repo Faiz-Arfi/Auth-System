@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import './App.css'
+import HomePage from './pages/HomePage'
+import Navbar from './components/Navbar'
 
 function App() {
 
   return (
     <>
-    <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+      <Navbar />
+      <HomePage />
     </>
   )
 }
