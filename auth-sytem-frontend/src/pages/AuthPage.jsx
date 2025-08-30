@@ -1,11 +1,25 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import AuthForm from '../components/AuthForm'
+import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '../api/auth';
 
 const AuthPage = () => {
 
     const [isLogin, setIsLogin] = useState(false);
 
+    const navigate = useNavigate();
+
+        useEffect(() => {
+            console.log("AuthPage mounted");
+            const checkUser = async () => {
+                const user = await getCurrentUser();
+                if (user) {
+                    navigate('/user/dashboard');
+                }
+            };
+            checkUser();
+        }, [navigate]);
 
     return (<>
         <div className='mt-4 auth-page flex flex-col justify-center items-center gap-6 p-6 w-2/6 m-auto'>
