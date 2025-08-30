@@ -2,10 +2,31 @@ import { useState } from 'react'
 import GoogleLogo from '../assets/google-icon-logo.svg'
 import ShowPassIcon from '../assets/password-show.svg'
 import HidePassIcon from '../assets/password-hide.svg'
+import AuthMessage from './AuthMessage'
 
 const AuthForm = ( { mode = "register"} ) => {
     const [showPass, setShowPass] = useState(false);
     const isLogin = mode === "login";
+
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [error, setError] = useState('');
+    const [warn, setWarn] = useState('');
+    const [success, setSuccess] = useState('');
+
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        // todo : login logic
+    }
+
+    const handleRegister = (e) => {
+        e.preventDefault();
+        // todo : register logic
+    }
     
     return (<>
         
@@ -20,14 +41,19 @@ const AuthForm = ( { mode = "register"} ) => {
                 <p className='text-gray-600'>Please Register yourself</p>
             </div>
         }
-            
+            <AuthMessage message={error} type="error" />
+            <AuthMessage message={warn} type="warn" />
+            <AuthMessage message={success} type="success" />
             <div className="goole-auth w-full">
                 <a className='w-full flex items-center justify-center gap-3 border-2 border-gray-400 px-5 py-3 rounded-md hover:cursor-pointer hover:bg-gray-100 transition'>
                     <img src={GoogleLogo} alt="google-logo" className='w-6 h-6' />
                     <span>Continue with Google</span>
                 </a>
             </div>
-            <form className='flex flex-col gap-4 w-full'>
+            <form 
+                className='flex flex-col gap-4 w-full'
+                onSubmit={isLogin ? handleLogin : handleRegister}
+            >
                 <h2 className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-6">
                     <span className="block h-px bg-gray-400" />
                     <span className='text-gray-400'>Or</span>
