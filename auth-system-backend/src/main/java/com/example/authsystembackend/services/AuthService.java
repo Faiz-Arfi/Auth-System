@@ -98,7 +98,7 @@ public class AuthService {
                 user.setVerificationCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
                 userRepo.save(user);
                 //TO-DO : send email verification link
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please verify your email");
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Please verify your email");
             }
 
             if (authentication.isAuthenticated()) {
