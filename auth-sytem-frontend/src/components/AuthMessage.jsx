@@ -13,6 +13,9 @@ const AuthMessage = ({ message, type }) => {
         {type == 'warn'? <div className="w-full text-center py-2 rounded-md shadow-yellow-200 text-yellow-500 bg-yellow-100">
             {message}
         </div> : null}
+        {type == 'info'? <div className="w-full text-center py-2 rounded-md shadow-blue-200 text-blue-500 bg-blue-100">
+            {message}
+        </div> : null}
     </>
     )
 }
