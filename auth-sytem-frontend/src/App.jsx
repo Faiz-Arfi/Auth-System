@@ -26,7 +26,7 @@ function App() {
       errorElement: <ErrorPage />,
     },
     {
-      path: "/user",
+      path: "/user/dashboard",
       element: <>
         <Navbar />
         <UserPage />
