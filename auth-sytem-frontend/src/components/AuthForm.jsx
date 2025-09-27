@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import GoogleLogo from '../assets/google-icon-logo.svg'
 import ShowPassIcon from '../assets/password-show.svg'
 import HidePassIcon from '../assets/password-hide.svg'
@@ -21,6 +21,13 @@ const AuthForm = ({ mode = "register" }) => {
     const [info, setInfo] = useState('');
 
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verified') === 'true') {
+            setSuccess("Registration successful! Please log in.");
+        }
+    }, []);
 
     const navigate = useNavigate();
 

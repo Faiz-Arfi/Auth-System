@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 
 import AuthForm from '../components/AuthForm'
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,14 @@ const AuthPage = () => {
             };
             checkUser();
         }, [navigate]);
+
+        //check query param to set isEmailVerified
+        useEffect(() => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('verified') === 'true') {
+                setIsLogin(true);
+            }
+        }, []);
 
     return (<>
         <div className='mt-4 auth-page flex flex-col justify-center items-center gap-6 p-6 w-2/6 m-auto'>
