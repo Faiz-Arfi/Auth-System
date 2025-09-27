@@ -28,12 +28,29 @@ export const register = async (userName, email, password, confirmPassword) => {
     }
 }
 
+export const logout = async () => {
+    try {
+        const response = await axios.post(
+            `${baseUrl}/logout`,
+            {},
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 // token is stored in httpOnly cookie
 export const getCurrentUser = async () => {
-    const response = await axios.get(
-        `${baseUrl}/get-current-user`,
-        { withCredentials: true }
-    );
-    return response.data;
+    try {
+        const response = await axios.get(
+            `${baseUrl}/get-current-user`,
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 }
 

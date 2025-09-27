@@ -1,7 +1,21 @@
+import { useEffect, useState } from "react";
 import Logo from "../assets/brand-logo.svg";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { logout } from "../api/auth";
 
-const Navbar = () => {
+const Navbar = ( {isLoggedIn} ) => {
+
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    }
+
     return (
         <nav className="flex justify-around items-center p-4 bg-white shadow-md">
             {/* Brand */}
@@ -34,7 +48,19 @@ const Navbar = () => {
             </ul>
             {/* login and signup */}
             <ul className="flex gap-4 items-center">
+                {isLoggedIn ?
+                <>
+                    <li className="bg-red-600 hover:bg-red-400 px-4 py-2 rounded-md"><button
+                        onClick={handleLogout} 
+                        className="text-amber-50"
+                        >
+                            Logout
+                        </button>
+                    </li>
+                </>
+                :
                 <li className="bg-gray-800 hover:bg-gray-600 px-4 py-2 rounded-md"><Link to="/login" className="text-amber-50">Login/Register</Link></li>
+                }
             </ul>
         </nav>
     );
