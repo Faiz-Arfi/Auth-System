@@ -27,6 +27,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     @Value("${email.verification.validity-time}")
     private String verificationCodeValidityTime;
@@ -34,11 +35,12 @@ public class AuthService {
     @Value("${jwt.access-token-validity-time}")
     private String accessTokenValidityTime;
 
-    public AuthService(UserRepo userRepo, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(UserRepo userRepo, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService, EmailService emailService) {
         this.userRepo = userRepo;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
     public UserDTO signup(RegisterRequestDTO registerRequestDTO) {
@@ -78,7 +80,7 @@ public class AuthService {
 
         User savedUser = userRepo.save(user);
         savedUser.setVerificationCode(jwtService.generateToken(savedUser, Long.parseLong(verificationCodeValidityTime)));
-        //TO-DO : send email verification link
+        emailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getVerificationCode());
         return new UserDTO().toDTO(userRepo.save(savedUser));
     }
 
@@ -97,7 +99,7 @@ public class AuthService {
             if(!user.isEmailVerified()) {
                 user.setVerificationCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
                 userRepo.save(user);
-                //TO-DO : send email verification link
+                emailService.sendVerificationEmail(user.getEmail(), user.getVerificationCode());
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Please verify your email");
             }
 
