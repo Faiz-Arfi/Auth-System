@@ -1,6 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { getCurrentUser } from '../api/auth';
 
 const UserPage = () => {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Fetch user data from backend
+    const fetchUserData = async () => {
+      try {
+        const response = await getCurrentUser();
+        setUser(response);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    }
+    fetchUserData();
+    console.log("UserPage mounted");
+    console.log(user);
+  }, []);
+
   return (<>
     <div className="stats">
         <div className="stat">

@@ -86,6 +86,10 @@ const AuthForm = ({ mode = "register" }) => {
         }
     }
 
+    const handleGoogleAuth = () => {
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    }
+
     return (<>
 
         {isLogin ?
@@ -105,7 +109,7 @@ const AuthForm = ({ mode = "register" }) => {
             <AuthMessage message={success} type="success" />
             <AuthMessage message={info} type="info" />
         </div>
-        <div className="goole-auth w-full">
+        <div onClick={handleGoogleAuth} className="goole-auth w-full">
             <a className='w-full flex items-center justify-center gap-3 border-2 border-gray-400 px-5 py-3 rounded-md hover:cursor-pointer hover:bg-gray-100 transition'>
                 <img src={GoogleLogo} alt="google-logo" className='w-6 h-6' />
                 <span>Continue with Google</span>
