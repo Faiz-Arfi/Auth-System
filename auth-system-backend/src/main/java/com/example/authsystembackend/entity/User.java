@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Data
@@ -24,6 +23,8 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    private String profilePicture;
 
     private boolean isEmailVerified;
 
