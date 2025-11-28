@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-d
 import ErrorPage from './pages/ErrorPage'
 import { useEffect, useState } from 'react'
 import { getCurrentUser } from './api/auth'
+import ProtectedRoutes from './components/ProtectedRoutes'
 
 function App() {
 
@@ -53,8 +54,10 @@ function App() {
     {
       path: "/user/dashboard",
       element: <>
-        <Navbar isLoggedIn={true} />
-        <UserPage />
+        <ProtectedRoutes>
+          <Navbar isLoggedIn={true} />
+          <UserPage />
+        </ProtectedRoutes>
       </>,
       errorElement: <ErrorPage />,
     },
