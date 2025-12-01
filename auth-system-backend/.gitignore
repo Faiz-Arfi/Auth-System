@@ -1,5 +1,6 @@
 HELP.md
-variables.env
+dev-variables.env
+prod-variables.env
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
