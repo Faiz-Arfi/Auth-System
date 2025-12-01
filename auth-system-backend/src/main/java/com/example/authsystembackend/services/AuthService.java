@@ -4,6 +4,7 @@ import com.example.authsystembackend.dto.LoginRequestDTO;
 import com.example.authsystembackend.dto.LoginResponseDTO;
 import com.example.authsystembackend.dto.RegisterRequestDTO;
 import com.example.authsystembackend.dto.UserDTO;
+import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
 import com.example.authsystembackend.jwt.JwtService;
 import com.example.authsystembackend.repository.UserRepo;
@@ -76,7 +77,7 @@ public class AuthService {
         user.setUserName(registerRequestDTO.getUserName());
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setEmailVerified(false);
-        user.setRole("NOVICE");
+        user.setRole(Role.NOVICE);
         user.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
         user.setNoOfLogins(0);
         user.setPoints(0);

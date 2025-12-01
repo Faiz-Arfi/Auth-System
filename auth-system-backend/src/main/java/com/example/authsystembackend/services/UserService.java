@@ -1,5 +1,6 @@
 package com.example.authsystembackend.services;
 
+import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
 import com.example.authsystembackend.repository.UserRepo;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class UserService {
                 .email(email)
                 .userName(name)
                 .profilePicture(pictureUrl)
-                .role("NOVICE")
+                .role(Role.NOVICE)
                 .isEmailVerified(true)
                 .password(passwordEncoder.encode(generateRandomPassword()))
                 .points(0)

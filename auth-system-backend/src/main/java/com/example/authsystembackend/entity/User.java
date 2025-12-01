@@ -32,7 +32,7 @@ public class User {
 
     private String verificationCode;
 
-    private String role;
+    private Role role;
 
     private Date createdAt;
 
