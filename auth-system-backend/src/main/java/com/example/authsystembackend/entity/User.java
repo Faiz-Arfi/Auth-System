@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -31,4 +33,24 @@ public class User {
     private String verificationCode;
 
     private String role;
+
+    private Date createdAt;
+
+    private Date previousLogin;
+
+    private Integer noOfLogins;
+
+    private String resetPasswordCode;
+
+    private boolean activity1Status;
+
+    private boolean activity2Status;
+
+    private boolean activity3Status;
+
+    private boolean activity4Status;
+
+    private boolean activity5Status;
+
+    private Integer points;
 }

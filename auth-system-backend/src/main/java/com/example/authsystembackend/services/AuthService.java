@@ -76,7 +76,16 @@ public class AuthService {
         user.setUserName(registerRequestDTO.getUserName());
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setEmailVerified(false);
-        user.setRole("USER");
+        user.setRole("NOVICE");
+        user.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+        user.setNoOfLogins(0);
+        user.setPoints(0);
+        user.setPreviousLogin(new java.sql.Timestamp(System.currentTimeMillis()));
+        user.setActivity1Status(false);
+        user.setActivity2Status(false);
+        user.setActivity3Status(false);
+        user.setActivity4Status(false);
+        user.setActivity5Status(false);
 
         User savedUser = userRepo.save(user);
         savedUser.setVerificationCode(jwtService.generateToken(savedUser, Long.parseLong(verificationCodeValidityTime)));
@@ -104,6 +113,8 @@ public class AuthService {
             }
 
             if (authentication.isAuthenticated()) {
+                user.setNoOfLogins(user.getNoOfLogins() + 1);
+                userRepo.save(user);
                 //generate accessToken
                 return LoginResponseDTO.builder()
                         .accessToken(jwtService.generateToken(user, Long.parseLong(accessTokenValidityTime)))
@@ -121,7 +132,11 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<String> logout(String email) {
+
+        User user = userRepo.findByEmail(email).orElseThrow();
+        user.setPreviousLogin(new java.sql.Timestamp(System.currentTimeMillis()));
+        userRepo.save(user);
 
         ResponseCookie responseCookie = ResponseCookie.from("JWT", "")
                 .httpOnly(true)
@@ -130,6 +145,7 @@ public class AuthService {
                 .maxAge(0)
                 .sameSite("strict")
                 .build();
+
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())

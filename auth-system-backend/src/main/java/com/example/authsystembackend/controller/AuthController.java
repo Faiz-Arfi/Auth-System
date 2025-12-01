@@ -49,8 +49,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return authService.logout();
+    public ResponseEntity<String> logout(Authentication authentication) {
+        String email = authentication.getName();
+        return authService.logout(email);
     }
 
     @GetMapping("/get-current-user")
