@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../api/auth';
 import AuthDetailCard from '../components/user-page/AuthDetailCard';
-import { CopyPlusIcon, Key, Lock, Logs, LucideBadgeInfo, Star, UserCog2, UserPlus, UserStarIcon } from 'lucide-react';
+import { CopyPlusIcon, Key, Lock, Logs, LucideBadgeInfo, Star, UserCog, UserPlus, UserStarIcon } from 'lucide-react';
 import InfoCard from '../components/user-page/InfoCard';
 import ActivityCard from '../components/user-page/ActivityCard';
+import { Link } from 'react-router-dom';
 
 const UserPage = () => {
 
@@ -83,17 +84,29 @@ const UserPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           <AuthDetailCard title='A/C created on' heading={accountCreatedOnTime} subHeading={accountCreatedOnDate} icon={UserPlus}/>
           <AuthDetailCard theme='dark' title='No of logins' heading={numberOfLogins} subHeading='times'/>
-          <AuthDetailCard title='Previous Login' heading={lastLoginTime} subHeading={lastLoginDate}/>
+          <AuthDetailCard title='Prev Login' heading={lastLoginTime} subHeading={lastLoginDate}/>
           <AuthDetailCard theme='dark' title='A/C Status' heading={role} subHeading='Verified'/>
         </div>
 
         <InfoCard title='Activity Zone' instruction='Try some fun activities which will demonstrate the robustness of this platform.' icon={LucideBadgeInfo}/>
 
         <div className="Activity-zone quick-info grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-          <ActivityCard theme='dark' title='Activity 1' heading='Change Role ' subHeading='Click here to Proceed' icon={UserStarIcon}/>
-          <ActivityCard theme='light' title='Activity 2' heading='Change Password ' subHeading='Click here to Proceed' icon={Key}/>
-          <ActivityCard theme='dark' title='Activity 3' heading='Activity Logs' subHeading='Click here to Proceed' icon={Logs}/>
-          <ActivityCard theme='light' title='Activity 4' heading='Profile Setting' subHeading='Click here to Proceed' icon={UserCog2}/>
+
+          {/* Change Role */}
+          <Link to="../user/change-role">
+            <ActivityCard theme='dark' title='Activity 1' heading='Change Role ' subHeading='Click here to Proceed' icon={UserStarIcon}/>
+          </Link>
+
+          {/* change password */}
+          <Link to="../user/change-password">
+            <ActivityCard theme='light' title='Activity 2' heading='Change Password ' subHeading='Click here to Proceed' icon={Key}/>
+          </Link>
+          <Link to="../user/activity-log">
+            <ActivityCard theme='dark' title='Activity 3' heading='Activity Logs' subHeading='Click here to Proceed' icon={Logs}/>
+          </Link>
+          <Link to="../user/profile-setting">
+            <ActivityCard theme='light' title='Activity 4' heading='Profile Setting' subHeading='Click here to Proceed' icon={UserCog}/>
+          </Link>
         </div>
         <InfoCard title='Bonus Activity' instruction='Complete this activity to get the legend tag on you status and transform the site .' icon={CopyPlusIcon}/>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">

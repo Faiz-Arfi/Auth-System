@@ -8,6 +8,10 @@ import ErrorPage from './pages/ErrorPage'
 import { useEffect, useState } from 'react'
 import { getCurrentUser } from './api/auth'
 import ProtectedRoutes from './components/ProtectedRoutes'
+import ChangeRole from './pages/features/ChangeRole'
+import ChangePassword from './pages/features/ChangePassword'
+import ActivityLog from './pages/features/ActivityLog'
+import ProfileSetting from './pages/features/ProfileSetting'
 
 function App() {
 
@@ -59,7 +63,47 @@ function App() {
           <UserPage />
         </ProtectedRoutes>
       </>,
-      errorElement: <ErrorPage />,
+      // errorElement: <ErrorPage />,
+    },
+    {
+      path: "/user/change-role",
+      element: <>
+        <ProtectedRoutes>
+          <Navbar isLoggedIn={true} />
+          <ChangeRole />
+        </ProtectedRoutes>
+      </>,
+      // errorElement: <ErrorPage />,
+    },
+    {
+      path: "/user/change-password",
+      element: <>
+        <ProtectedRoutes>
+          <Navbar isLoggedIn={true} />
+          <ChangePassword />
+        </ProtectedRoutes>
+      </>,
+      // errorElement: <ErrorPage />,
+    },
+    {
+      path: "/user/activity-log",
+      element: <>
+        <ProtectedRoutes>
+          <Navbar isLoggedIn={true} />
+          <ActivityLog />
+        </ProtectedRoutes>
+      </>,
+      // errorElement: <ErrorPage />,
+    },
+    {
+      path: "/user/profile-setting",
+      element: <>
+        <ProtectedRoutes>
+          <Navbar isLoggedIn={true} />
+          <ProfileSetting />
+        </ProtectedRoutes>
+      </>,
+      // errorElement: <ErrorPage />,
     },
   ]);
 
