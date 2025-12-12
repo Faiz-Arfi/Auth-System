@@ -1,5 +1,6 @@
 package com.example.authsystembackend.services;
 
+import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.entity.ActivityLog;
 import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -83,8 +85,11 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<?> changePassword(String email, String newPassword) {
+    public ResponseEntity<?> changePassword(String email, String newPassword, String oldPassword) {
         User user = getUserByEmail(email);
+        if(!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return ResponseEntity.badRequest().body("Incorrect old password");
+        }
         user.setPassword(passwordEncoder.encode(newPassword));
 
         //Log the activity
@@ -97,6 +102,53 @@ public class UserService {
                                                                 .build();
         user.getActivityLogs().add(activityLog);
         userRepo.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    public ResponseEntity<?> editProfile(String email, UserDTO userDTO) {
+        User user = getUserByEmail(email);
+        // LOG The activity
+        ActivityLog activityLog = ActivityLog.builder()
+                .user(user)
+                .type(ActivityLog.ActivityType.PROFILE_UPDATE)
+                .severity(ActivityLog.ActivitySeverity.MODERATE)
+                .description("Profile Updated")
+                .recordedAt(new Timestamp(System.currentTimeMillis()))
+                .build();
+        user.setUserName(userDTO.getUserName());
+        user.getActivityLogs().add(activityLog);
+        userRepo.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?> resetAccount(String email) {
+        User user = getUserByEmail(email);
+        // clear all the feilds except username and password
+        User newUser = User.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .userName(user.getUserName())
+                .password(user.getPassword())
+                .role(Role.NOVICE)
+                .isEmailVerified(true)
+                .points(0)
+                .createdAt(user.getCreatedAt())
+                .activity1Status(false)
+                .activity2Status(false)
+                .activity3Status(false)
+                .activity4Status(false)
+                .activity5Status(false)
+                .noOfLogins(0)
+                .activityLogs(new ArrayList<>())
+                .build();
+        userRepo.save(newUser);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?> deleteAccount(String email) {
+        User user = getUserByEmail(email);
+        userRepo.delete(user);
         return ResponseEntity.ok().build();
     }
 }
