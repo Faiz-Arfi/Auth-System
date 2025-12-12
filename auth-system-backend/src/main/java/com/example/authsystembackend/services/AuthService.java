@@ -4,6 +4,7 @@ import com.example.authsystembackend.dto.LoginRequestDTO;
 import com.example.authsystembackend.dto.LoginResponseDTO;
 import com.example.authsystembackend.dto.RegisterRequestDTO;
 import com.example.authsystembackend.dto.UserDTO;
+import com.example.authsystembackend.entity.ActivityLog;
 import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
 import com.example.authsystembackend.jwt.JwtService;
@@ -20,6 +21,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
 
 @Service
 public class AuthService {
@@ -87,6 +90,16 @@ public class AuthService {
         user.setActivity3Status(false);
         user.setActivity4Status(false);
         user.setActivity5Status(false);
+        user.setActivityLogs(new ArrayList<>());
+
+        ActivityLog activityLog = ActivityLog.builder()
+                        .type(ActivityLog.ActivityType.PROFILE_UPDATE)
+                        .severity(ActivityLog.ActivitySeverity.BASIC)
+                        .description("Account Created")
+                        .recordedAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                        .user(user)
+                        .build();
+        user.getActivityLogs().add(activityLog);
 
         User savedUser = userRepo.save(user);
         savedUser.setVerificationCode(jwtService.generateToken(savedUser, Long.parseLong(verificationCodeValidityTime)));
@@ -115,6 +128,17 @@ public class AuthService {
 
             if (authentication.isAuthenticated()) {
                 user.setNoOfLogins(user.getNoOfLogins() + 1);
+
+                //Log in activity
+                ActivityLog activityLog = ActivityLog.builder()
+                        .type(ActivityLog.ActivityType.LOGIN)
+                        .severity(ActivityLog.ActivitySeverity.BASIC)
+                        .description("User logged in")
+                        .recordedAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                        .user(user)
+                        .build();
+                user.getActivityLogs().add(activityLog);
+
                 userRepo.save(user);
                 //generate accessToken
                 return LoginResponseDTO.builder()
