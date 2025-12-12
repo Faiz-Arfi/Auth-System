@@ -4,8 +4,12 @@ import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
 import com.example.authsystembackend.repository.UserRepo;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -58,5 +62,13 @@ public class UserService {
             sb.append((char)(Math.random()*26 + 'a'));
         }
         return sb;
+    }
+
+    @Transactional
+    public ResponseEntity<?> changePassword(String email, String newPassword) {
+        User user = getUserByEmail(email);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+        return ResponseEntity.ok().build();
     }
 }
