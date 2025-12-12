@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -53,4 +54,7 @@ public class User {
     private boolean activity5Status;
 
     private Integer points;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ActivityLog> activityLogs;
 }
