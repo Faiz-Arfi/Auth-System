@@ -44,7 +44,7 @@ public class UserController {
         return userService.resetAccount(email);
     }
 
-    @DeleteMapping("/delete-account")
+    @DeleteMapping("/delete-account") 
     public ResponseEntity<?> deleteAccount (Authentication authentication) {
         if(authentication == null) {
             return ResponseEntity.badRequest().body("No user logged in");

@@ -107,6 +107,10 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> editProfile(String email, UserDTO userDTO) {
+        //check for invalid userName
+        if(userDTO.getUserName().isBlank()) {
+            return ResponseEntity.badRequest().body("Invalid username");
+        }
         User user = getUserByEmail(email);
         // LOG The activity
         ActivityLog activityLog = ActivityLog.builder()
