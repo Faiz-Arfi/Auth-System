@@ -1,13 +1,72 @@
 import { ArrowRight, Check } from 'lucide-react'
 import React, { useState } from 'react'
+import { changeUserRole, checkPromoCode } from '../../api/profile';
 
 const OfferPlan = ({
   type = "type",
   features = ['feature1', 'feature2'],
-  price = "100",
-  currentPlan = false,
+  price = "100"
 }) => {
   const [isHovered, setIsHovered] = useState(false)
+  const [rolePrice, setRolePrice] = useState(price);
+  const [promoCode, setPromoCode] = useState("");
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const currentPlan = localStorage.getItem('role') === type;
+
+  const applyPromoCode = async (e) => {
+    e.preventDefault();
+    setMessage({ text: '', type: '' });
+
+    if (!promoCode.trim()) {
+      setMessage({ text: 'Please enter a promo code.', type: 'error' });
+      return;
+    }
+
+    try {
+      const response = await checkPromoCode(promoCode, type);
+      if (response) {
+        const discountedPrice = Number(price) - Number(response);
+        setRolePrice(discountedPrice >= 0 ? discountedPrice : 0);
+        setMessage({ 
+          text: `Promo code applied! You saved ${response} Points.`, 
+          type: 'success' 
+        });
+      }
+    } catch (error) {
+      setRolePrice(price);
+      setMessage({ 
+        text: error.response?.data || 'Invalid promo code.', 
+        type: 'error' 
+      });
+    }
+  }
+
+  const processRoleChange = async (e) => {
+    e.preventDefault();
+    setMessage({ text: '', type: '' });
+
+    try {
+      const response = await changeUserRole(type, promoCode);
+      if (response) {
+        setMessage({ 
+          text: 'Role changed successfully! Reload in 2 seconds...', 
+          type: 'success' 
+        });
+        localStorage.setItem('role', type);
+        localStorage.setItem('points', response);
+        //reload page in 3 seconds
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+      setMessage({ 
+        text: 'Failed to change role. Please try again. Your session may have expired. Reloading the page might help.', 
+        type: 'error' 
+      });
+    }
+  }
 
   return (
     <div
@@ -16,7 +75,7 @@ const OfferPlan = ({
       className={isHovered ? 'bg-gray-800 border-gray-300 border-2 rounded-2xl p-4 hover:shadow-1xl hover:scale-105 transition-all duration-300' : 'border-gray-300 border-2 rounded-2xl p-4'}>
       <div className="heading">
         <h2 className='text-xl font-semibold text-gray-400'>{type}</h2>
-        <p className={isHovered ? 'text-3xl font-bold my-4 text-gray-200' : 'text-3xl font-bold my-4 text-gray-800'}>{price} <span className='text-gray-400'>Points</span></p>
+        <p className={isHovered ? 'text-3xl font-bold my-4 text-gray-200' : 'text-3xl font-bold my-4 text-gray-800'}>{rolePrice} <span className='text-gray-400'>Points</span></p>
         <p className='text-gray-400 mb-4'>This Role includes the following Benifits:</p>
       </div>
       {
@@ -35,13 +94,26 @@ const OfferPlan = ({
             type="text"
             placeholder="Enter promo code"
             disabled={currentPlan}
-            className={`border border-gray-300 rounded-lg p-2 flex-1 ${isHovered ? 'placeholder-gray-400 text-gray-200' : 'text-gray-800 placeholder-gray-600'} ${currentPlan ? 'opacity-50 cursor-not-allowed' : ''}`}
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value)}
+            className={`border border-gray-300 rounded-lg p-2 flex-1 ${isHovered ? 'placeholder-gray-400 text-gray-200 bg-gray-700' : 'text-gray-800 placeholder-gray-600 bg-white'} ${currentPlan ? 'opacity-50 cursor-not-allowed' : ''}`}
           />
-          <button className='bg-gray-100 text-gray-500 border border-gray-300 p-2 rounded-lg' disabled={currentPlan}><ArrowRight /></button>
+          <button 
+            className={`bg-gray-100 text-gray-500 border border-gray-300 p-2 rounded-lg ${!currentPlan && !isHovered ? 'hover:bg-gray-200' : ''}`} 
+            disabled={currentPlan} 
+            onClick={applyPromoCode}
+          >
+            <ArrowRight />
+          </button>
         </div>
+        {message.text && (
+          <div className={`w-full text-sm font-semibold my-2 ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+            {message.text}
+          </div>
+        )}
       </div>
       <div className=''>
-        <button className={`w-full p-3 rounded-lg text-lg font-semibold ${currentPlan ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-gray-500 text-amber-50 hover:bg-gray-200 hover:text-gray-500'}`} disabled={currentPlan}>
+        <button className={`w-full p-3 rounded-lg text-lg font-semibold ${currentPlan ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-gray-500 text-amber-50 hover:bg-gray-200 hover:text-gray-500'}`} disabled={currentPlan} onClick={processRoleChange}>
           {currentPlan ? 'Current Plan' : 'Choose Plan'}
         </button>
       </div>

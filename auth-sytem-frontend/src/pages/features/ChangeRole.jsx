@@ -1,6 +1,7 @@
 import React from 'react'
 import OfferPlan from '../../components/feature/OfferPlan'
 import { Link } from 'react-router-dom'
+import { Coins, Wallet } from 'lucide-react'
 
 const ChangeRole = () => {
   const noviceFeatures = [
@@ -8,6 +9,10 @@ const ChangeRole = () => {
     'Limited support',
     'Explore the website',
   ];
+
+  const currentPlan = localStorage.getItem('role');
+  const userPoints = localStorage.getItem('points') || '0';
+
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
 
@@ -22,11 +27,35 @@ const ChangeRole = () => {
         </h1>
       </div>
 
+      {/* User Points Section */}
+      <div className="mb-8">
+        <div className="bg-gradient-to-r from-green-500 to-gray-700 rounded-2xl shadow-lg p-6 border border-green-400 hover:shadow-xl transition-shadow">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-white p-4 rounded-xl">
+                <Wallet className="w-8 h-8 text-green-600" />
+              </div>
+              <div>
+                <p className="text-green-100 text-sm font-medium mb-1">Available Balance</p>
+                <div className="flex items-baseline gap-2">
+                  <h2 className="text-4xl font-bold text-white">{userPoints}</h2>
+                  <span className="text-green-100 text-lg font-semibold">Points</span>
+                </div>
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 bg-white px-4 py-2 rounded-lg ">
+              <Coins className="w-5 h-5 text-green-600" />
+              <span className="text-green-600 font-medium text-sm">Current Plan: {currentPlan || 'None'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="offer-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <OfferPlan type='NOVICE' price='100'  features={noviceFeatures} />
         <OfferPlan type='INTERMEDIATE' price='200'/>
-        <OfferPlan type='PRO'/>
-        <OfferPlan type='LEGEND'/>
+        <OfferPlan type='PRO' price='300'/>
+        <OfferPlan type='LEGEND' price='400'/>
       </div>
 
     </div>

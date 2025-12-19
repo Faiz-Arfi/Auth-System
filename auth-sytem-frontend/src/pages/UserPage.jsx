@@ -14,7 +14,7 @@ const UserPage = () => {
   const [lastLoginTime, setLastLoginTime] = useState(null);
   const [accountCreatedOnDate, setAccountCreatedOnDate] = useState(null);
   const [accountCreatedOnTime, setAccountCreatedOnTime] = useState(null);
-  const [role, setRole] = useState("User");
+  const [role, setRole] = useState("Not Set");
   const [userName, setUserName] = useState("");
   const [points, setPoints] = useState(0);
   const [activity1Status, setActivity1Status] = useState(false);
@@ -32,9 +32,11 @@ const UserPage = () => {
         
         setUser(response);
         setRole(response.role || "User");
+        localStorage.setItem('role', response.role || "User");
         setUserName(response.userName || "");
         setNumberOfLogins(response.noOfLogins || 0);
         setPoints(response.points || 0);
+        localStorage.setItem('points', response.points || 0);
         setActivity1Status(response.activity1Status || false);
         setActivity2Status(response.activity2Status || false);
         setActivity3Status(response.activity3Status || false);
