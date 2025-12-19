@@ -1,5 +1,6 @@
 import { AlertTriangle, X } from 'lucide-react'
 import React, { useState } from 'react'
+import { deleteAccount, resetAccount } from '../../api/profile';
 
 const ModifyAccountModal = (
     { toggleModal, title, confirmText }
@@ -7,12 +8,24 @@ const ModifyAccountModal = (
 
     const [confirmationText, setConfirmationText] = useState('');
 
-    const handleModification = (e) => {
-        e.preventDefault();
+    const handleModification = async (e) => {
+        e.preventDefault()
         if (confirmationText === confirmText) {
-            alert(title + ' confirmed!');
-            toggleModal();
-            setConfirmationText('');
+            try {
+                if (confirmText === 'DELETE') {
+                    await deleteAccount();
+                }
+                else {
+                    await resetAccount();
+                }
+            } catch (error) {
+                alert("Action failed. Please try again.");
+            } finally {
+                toggleModal();
+                setConfirmationText('');
+                //navigate to login page
+                navigation.navigate('/login');
+            }
         }
     }
 
