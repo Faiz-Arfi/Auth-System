@@ -49,7 +49,7 @@ const OfferPlan = ({
 
     try {
       const response = await changeUserRole(type, promoCode);
-      if (response) {
+      if (response !== undefined && response !== null) {
         setMessage({ 
           text: 'Role changed successfully! Reload in 2 seconds...', 
           type: 'success' 
