@@ -33,9 +33,11 @@ const OfferPlan = ({
         });
       }
     } catch (error) {
+      console.log(error);
       setRolePrice(price);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Invalid promo code.';
       setMessage({ 
-        text: error.response?.data || 'Invalid promo code.', 
+        text: typeof errorMessage === 'string' ? errorMessage : 'Invalid promo code.', 
         type: 'error' 
       });
     }
@@ -61,8 +63,9 @@ const OfferPlan = ({
       }
     } catch (error) {
       console.log(error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Failed to change role. Please try again.';
       setMessage({ 
-        text: 'Failed to change role. Please try again. Your session may have expired. Reloading the page might help.', 
+        text: typeof errorMessage === 'string' ? errorMessage : 'Failed to change role. Your session may have expired.',
         type: 'error' 
       });
     }
