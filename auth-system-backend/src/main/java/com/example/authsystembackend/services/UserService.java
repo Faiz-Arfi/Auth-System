@@ -2,8 +2,10 @@ package com.example.authsystembackend.services;
 
 import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.entity.ActivityLog;
+import com.example.authsystembackend.entity.PromoCodeDetails;
 import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.repository.PromoCodeDetailsRepo;
 import com.example.authsystembackend.repository.UserRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,12 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final PromoCodeDetailsRepo promoCodeDetailsRepo;
 
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, PromoCodeDetailsRepo promoCodeDetailsRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.promoCodeDetailsRepo = promoCodeDetailsRepo;
     }
 
     public User getUserByEmail(String email) {
@@ -154,5 +158,94 @@ public class UserService {
         User user = getUserByEmail(email);
         userRepo.delete(user);
         return ResponseEntity.ok().build();
+    }
+
+    private PromoCodeDetails getByPromoCode(String promoCode) {
+                return promoCodeDetailsRepo.findByPromoCode(promoCode).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Promo Code not found"));
+    }
+
+    public ResponseEntity<?> checkPromo(String promoCode, String role) {
+        if (promoCode == null || promoCode.isBlank()) {
+            return ResponseEntity.badRequest().body("Promo code is required");
+        }
+        Role requestedRole = parseRole(role);
+
+        PromoCodeDetails promoCodeDetails = getByPromoCode(promoCode.trim());
+
+        Role promoRole = promoCodeDetails.getRole();
+        if (promoRole == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Promo code role is not configured");
+        }
+
+        if (promoRole == requestedRole) {
+            return ResponseEntity.ok(promoCodeDetails.getDiscount());
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Promo Code is not valid for this role");
+    }
+
+    private Role parseRole(String role) {
+        if (role == null || role.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role is required");
+        }
+        try {
+            return Role.valueOf(role.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role");
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> changePlan(String email, String promoCode, String role) {
+        User user = getUserByEmail(email);
+        if(user.getRole() == Role.valueOf(role.toUpperCase())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are already on this plan");
+        }
+
+        int discount = 0;
+        //check if promo code is given or not
+        if(!(promoCode == null) && !promoCode.isBlank() ) {
+            PromoCodeDetails promoCodeDetails = getByPromoCode(promoCode);
+            if(!promoCodeDetails.getRole().toString().equals(role)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid Promo Code");
+            }
+            discount = promoCodeDetails.getDiscount();
+        }
+
+        int cost = getPriceForRole(role) - discount;
+        if(user.getPoints() < cost) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient points");
+        }
+        user.setRole(Role.valueOf(role.toUpperCase()));
+        user.setPoints(user.getPoints() - cost);
+        //log the activity
+        ActivityLog activityLog = ActivityLog.builder()
+                .user(user)
+                .type(ActivityLog.ActivityType.ROLE_CHANGE)
+                .severity(ActivityLog.ActivitySeverity.BASIC)
+                .description("Changed plan to " + role.toUpperCase())
+                .recordedAt(new Timestamp(System.currentTimeMillis()))
+                .build();
+        user.getActivityLogs().add(activityLog);
+        userRepo.save(user);
+        return ResponseEntity.ok().body(user.getPoints());
+    }
+
+    private int getPriceForRole(String role) {
+        switch(Role.valueOf(role.toUpperCase())) {
+            case NOVICE -> {
+                return 100;
+            }
+            case PRO -> {
+                return 300;
+            }
+            case INTERMEDIATE -> {
+                return 200;
+            }
+            case LEGEND -> {
+                return 400;
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 }

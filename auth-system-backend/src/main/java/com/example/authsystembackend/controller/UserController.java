@@ -44,12 +44,23 @@ public class UserController {
         return userService.resetAccount(email);
     }
 
-    @DeleteMapping("/delete-account") 
+    @DeleteMapping("/delete-account")
     public ResponseEntity<?> deleteAccount (Authentication authentication) {
         if(authentication == null) {
             return ResponseEntity.badRequest().body("No user logged in");
         }
         String email = authentication.getName();
         return userService.deleteAccount(email);
+    }
+
+    @GetMapping("/check-promo")
+    public ResponseEntity<?> checkPromo (@RequestParam String promoCode, @RequestParam String role) {
+        return userService.checkPromo(promoCode, role);
+    }
+
+    @PostMapping("/change-plan")
+    public ResponseEntity<?> changePlan (Authentication authentication, @RequestParam String promoCode, @RequestParam String role) {
+        String email = authentication.getName();
+        return userService.changePlan(email, promoCode, role);
     }
 }
