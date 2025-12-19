@@ -1,5 +1,4 @@
-import { useState, useEffect, use } from 'react'
-
+import { useState, useEffect } from 'react'
 import AuthForm from '../components/AuthForm'
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../api/auth';
@@ -7,30 +6,42 @@ import { getCurrentUser } from '../api/auth';
 const AuthPage = () => {
 
     const [isLogin, setIsLogin] = useState(false);
+    const [showExpiredMessage, setShowExpiredMessage] = useState(false);
 
     const navigate = useNavigate();
 
-        useEffect(() => {
-            console.log("AuthPage mounted");
-            const checkUser = async () => {
-                const user = await getCurrentUser();
-                if (user) {
-                    navigate('/user/dashboard');
-                }
-            };
-            checkUser();
-        }, [navigate]);
-
-        //check query param to set isEmailVerified
-        useEffect(() => {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('verified') === 'true') {
-                setIsLogin(true);
+    useEffect(() => {
+        const checkUser = async () => {
+            const user = await getCurrentUser();
+            if (user) {
+                navigate('/user/dashboard');
             }
-        }, []);
+        };
+        checkUser();
+    }, [navigate]);
+
+    //check query params
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verified') === 'true') {
+            setIsLogin(true);
+        }
+        if (params.get('expired') === 'true') {
+            setShowExpiredMessage(true);
+            setIsLogin(true);
+            // Hide message after 5 seconds
+            setTimeout(() => setShowExpiredMessage(false), 5000);
+        }
+    }, []);
 
     return (<>
         <div className='mt-4 auth-page flex flex-col justify-center items-center gap-6 p-6 w-2/6 m-auto'>
+            {showExpiredMessage && (
+                <div className='w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative' role="alert">
+                    <strong className='font-bold'>Session Expired!</strong>
+                    <span className='block sm:inline'> Your session has expired. Please log in again.</span>
+                </div>
+            )}
             <div className='action-btn flex gap-4 w-full'>
                 {isLogin ? 
                 <button 

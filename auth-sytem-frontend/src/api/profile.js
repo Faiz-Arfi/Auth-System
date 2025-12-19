@@ -1,14 +1,13 @@
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import { logout } from './auth';
 
 const baseUrl = 'http://localhost:8080/user';
 
 export const editName = async (userName) => {
     try {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/edit-profile`,
-            { userName },
-            { withCredentials: true }
+            { userName }
         );
         return response.data;
     } catch (error) {
@@ -18,10 +17,9 @@ export const editName = async (userName) => {
 
 export const editPassword = async (formData) => {
     try {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/change-password`,
-            formData,
-            { withCredentials: true }
+            formData
         );
         return response.data;
     } catch (error) {
@@ -31,10 +29,9 @@ export const editPassword = async (formData) => {
 
 export const resetAccount = async () => {
     try {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/reset-account`,
-            {},
-            { withCredentials: true }
+            {}
         );
         //run the logout function from auth api after resetting account
         logout();
@@ -46,9 +43,8 @@ export const resetAccount = async () => {
 
 export const deleteAccount = async () => {
     try {
-        const response = await axios.delete(
-            `${baseUrl}/delete-account`,
-            { withCredentials: true }
+        const response = await axiosInstance.delete(
+            `${baseUrl}/delete-account`
         );
         //run the logout function from auth api after deleting account
         logout();
@@ -60,9 +56,8 @@ export const deleteAccount = async () => {
 
 export const checkPromoCode = async (promoCode, role) => {
     try {
-        const response = await axios.get(
-            `${baseUrl}/check-promo?promoCode=${promoCode}&role=${role}`,
-            { withCredentials: true }
+        const response = await axiosInstance.get(
+            `${baseUrl}/check-promo?promoCode=${promoCode}&role=${role}`
         );
         return response.data;
     } catch (error) {
@@ -73,10 +68,9 @@ export const checkPromoCode = async (promoCode, role) => {
 export const changeUserRole = async (role, promoCode) => {
     try {
         console.log('API call to changeUserRole with role:', role, 'and promoCode:', promoCode);
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/change-plan?role=${role}&promoCode=${promoCode}`,
-            {},
-            { withCredentials: true }
+            {}
         );
         return response.data;
     } catch (error) {
