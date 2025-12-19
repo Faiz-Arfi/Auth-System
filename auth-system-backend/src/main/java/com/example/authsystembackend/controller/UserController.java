@@ -1,5 +1,6 @@
 package com.example.authsystembackend.controller;
 
+import com.example.authsystembackend.dto.PasswordChangeDTO;
 import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +16,15 @@ public class UserController {
         this.userService = userService;
     }
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(Authentication authentication, @RequestBody String oldPassword, String newPassword, String confirmPassword) {
+    public ResponseEntity<?> changePassword(Authentication authentication, @RequestBody PasswordChangeDTO passwordChangeDTO) {
         if (authentication == null) {
             return ResponseEntity.badRequest().body("No user logged in");
         }
-        if (!newPassword.equals(confirmPassword)) {
+        if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("Passwords don't match");
         }
         String email = authentication.getName();
-        return userService.changePassword(email, newPassword, oldPassword);
+        return userService.changePassword(email, passwordChangeDTO.getNewPassword(), passwordChangeDTO.getOldPassword());
     }
 
     @PutMapping("/edit-profile")
