@@ -33,6 +33,7 @@ public class User {
 
     private String verificationCode;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private Date createdAt;
