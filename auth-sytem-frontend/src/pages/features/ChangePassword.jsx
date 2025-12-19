@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Eye, EyeOff, Lock } from 'lucide-react'
+import { editPassword } from '../../api/profile'
 
 const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -8,7 +9,7 @@ const ChangePassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   
   const [formData, setFormData] = useState({
-    currentPassword: '',
+    oldPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
@@ -20,9 +21,25 @@ const ChangePassword = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     console.log('Password change submitted:', formData)
+    try {
+      const response = await editPassword(formData);
+      console.log('Password changed successfully:', response);
+      alert('Password changed successfully!');
+      setFormData({
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (error) {
+      // check error status code
+      if(error.response && error.response.status === 500) {
+        // window.location.reload();
+      }
+      console.error('Error changing password:', error);
+    }
   }
 
   return (
@@ -57,9 +74,9 @@ const ChangePassword = () => {
                 </div>
                 <input
                   type={showCurrentPassword ? 'text' : 'password'}
-                  id="currentPassword"
-                  name="currentPassword"
-                  value={formData.currentPassword}
+                  id="oldPassword"
+                  name="oldPassword"
+                  value={formData.oldPassword}
                   onChange={handleChange}
                   className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="Enter your current password"
@@ -143,7 +160,7 @@ const ChangePassword = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setFormData({ currentPassword: '', newPassword: '', confirmPassword: '' })}
+                onClick={() => setFormData({ oldPassword: '', newPassword: '', confirmPassword: '' })}
                 className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
               >
                 Reset
