@@ -1,5 +1,6 @@
 package com.example.authsystembackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,10 +21,13 @@ public class ActivityLog {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
+    @Enumerated(EnumType.STRING)
     private ActivitySeverity severity;
 
+    @Enumerated(EnumType.STRING)
     private ActivityType type;
 
     private String description;

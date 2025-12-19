@@ -5,8 +5,11 @@ import com.example.authsystembackend.entity.ActivityLog;
 import com.example.authsystembackend.entity.PromoCodeDetails;
 import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.repository.ActivityLogRepo;
 import com.example.authsystembackend.repository.PromoCodeDetailsRepo;
 import com.example.authsystembackend.repository.UserRepo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -24,11 +28,13 @@ public class UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final PromoCodeDetailsRepo promoCodeDetailsRepo;
+    private final ActivityLogRepo activityLogRepo;
 
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, PromoCodeDetailsRepo promoCodeDetailsRepo) {
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, PromoCodeDetailsRepo promoCodeDetailsRepo, ActivityLogRepo activityLogRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.promoCodeDetailsRepo = promoCodeDetailsRepo;
+        this.activityLogRepo = activityLogRepo;
     }
 
     public User getUserByEmail(String email) {
@@ -247,5 +253,21 @@ public class UserService {
             }
         }
         return Integer.MAX_VALUE;
+    }
+
+    public Page<ActivityLog> getActivityLogOfDate(String email, String date, Pageable p) {
+        //check if date is valid
+        if(date == null || date.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is required");
+        }
+
+        User user = getUserByEmail(email);
+        java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+
+        Date startDay = new Date(sqlDate.getTime());
+        Date endDay = new Date(sqlDate.getTime() + 24 * 60 * 60 * 1000);
+
+        return activityLogRepo.findByUserIdAndRecordedAtBetween(user.getId(), startDay, endDay, p);
+
     }
 }

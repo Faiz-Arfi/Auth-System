@@ -2,7 +2,10 @@ package com.example.authsystembackend.controller;
 
 import com.example.authsystembackend.dto.PasswordChangeDTO;
 import com.example.authsystembackend.dto.UserDTO;
+import com.example.authsystembackend.entity.ActivityLog;
 import com.example.authsystembackend.services.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -63,5 +66,15 @@ public class UserController {
     public ResponseEntity<?> changePlan (Authentication authentication, @RequestParam String promoCode, @RequestParam String role) {
         String email = authentication.getName();
         return userService.changePlan(email, promoCode, role);
+    }
+
+    @GetMapping("/get-activity-log")
+    public ResponseEntity<Page<ActivityLog>> getActivityLogOfDate (Authentication authentication, @RequestParam String date, Pageable p) {
+        if(authentication == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        String email = authentication.getName();
+        Page<ActivityLog> activityLogs = userService.getActivityLogOfDate(email, date, p);
+        return ResponseEntity.ok(activityLogs);
     }
 }
