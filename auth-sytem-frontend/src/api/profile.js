@@ -16,6 +16,19 @@ export const editName = async (userName) => {
     }
 }
 
+export const editPassword = async (formData) => {
+    try {
+        const response = await axios.put(
+            `${baseUrl}/change-password`,
+            formData,
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const resetAccount = async () => {
     try {
         const response = await axios.put(
