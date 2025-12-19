@@ -55,9 +55,9 @@ const OfferPlan = ({
         localStorage.setItem('role', type);
         localStorage.setItem('points', response);
         //reload page in 3 seconds
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 2000);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       }
     } catch (error) {
       console.log(error);
