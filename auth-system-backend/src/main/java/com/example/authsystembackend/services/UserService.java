@@ -1,10 +1,7 @@
 package com.example.authsystembackend.services;
 
 import com.example.authsystembackend.dto.UserDTO;
-import com.example.authsystembackend.entity.ActivityLog;
-import com.example.authsystembackend.entity.PromoCodeDetails;
-import com.example.authsystembackend.entity.Role;
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.*;
 import com.example.authsystembackend.repository.ActivityLogRepo;
 import com.example.authsystembackend.repository.PromoCodeDetailsRepo;
 import com.example.authsystembackend.repository.UserRepo;
@@ -47,7 +44,9 @@ public class UserService {
         if (existingUser.isPresent()) {
             User user = existingUser.get();
             user.setProfilePicture(pictureUrl);
-            user.setNoOfLogins(user.getNoOfLogins() + 1);
+            user.getAuthInfo().setPreviousLogin(user.getAuthInfo().getCurrentLogin());
+            user.getAuthInfo().setCurrentLogin(new java.sql.Timestamp(System.currentTimeMillis()));
+            user.getAuthInfo().setNoOfLogins(user.getAuthInfo().getNoOfLogins() + 1);
 
             //Log the activity
             return getUser(user);
@@ -60,14 +59,21 @@ public class UserService {
                 .isEmailVerified(true)
                 .password(passwordEncoder.encode(generateRandomPassword()))
                 .points(0)
-                .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
                 .activity1Status(false)
                 .activity2Status(false)
                 .activity3Status(false)
                 .activity4Status(false)
                 .activity5Status(false)
-                .noOfLogins(1)
                 .build();
+
+        AuthInfo authInfo = AuthInfo.builder()
+                .previousLogin(new java.sql.Timestamp(System.currentTimeMillis()))
+                .currentLogin(new java.sql.Timestamp(System.currentTimeMillis()))
+                .noOfLogins(1)
+                .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                .user(newUser)
+                .build();
+        newUser.setAuthInfo(authInfo);
 
         return getUser(newUser);
     }
@@ -147,15 +153,16 @@ public class UserService {
                 .role(Role.NOVICE)
                 .isEmailVerified(true)
                 .points(0)
-                .createdAt(user.getCreatedAt())
                 .activity1Status(false)
                 .activity2Status(false)
                 .activity3Status(false)
                 .activity4Status(false)
                 .activity5Status(false)
-                .noOfLogins(0)
                 .activityLogs(new ArrayList<>())
                 .build();
+
+        user.getAuthInfo().setNoOfLogins(0);
+
         userRepo.save(newUser);
         return ResponseEntity.ok().build();
     }

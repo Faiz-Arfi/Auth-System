@@ -5,6 +5,7 @@ import com.example.authsystembackend.dto.LoginResponseDTO;
 import com.example.authsystembackend.dto.RegisterRequestDTO;
 import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.entity.ActivityLog;
+import com.example.authsystembackend.entity.AuthInfo;
 import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
 import com.example.authsystembackend.jwt.JwtService;
@@ -77,14 +78,19 @@ public class AuthService {
             user = new User();
             user.setEmail(registerRequestDTO.getEmail());
         }
+        AuthInfo authInfo = new AuthInfo();
+        authInfo.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+        authInfo.setUser(user);
+        authInfo.setCurrentLogin(new java.sql.Timestamp(System.currentTimeMillis()));
+        authInfo.setPreviousLogin(new java.sql.Timestamp(System.currentTimeMillis()));
+        authInfo.setNoOfLogins(0);
+
+        user.setAuthInfo(authInfo);
         user.setUserName(registerRequestDTO.getUserName());
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setEmailVerified(false);
         user.setRole(Role.NOVICE);
-        user.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
-        user.setNoOfLogins(0);
         user.setPoints(0);
-        user.setPreviousLogin(new java.sql.Timestamp(System.currentTimeMillis()));
         user.setActivity1Status(false);
         user.setActivity2Status(false);
         user.setActivity3Status(false);
@@ -127,8 +133,9 @@ public class AuthService {
             }
 
             if (authentication.isAuthenticated()) {
-                user.setNoOfLogins(user.getNoOfLogins() + 1);
-
+                user.getAuthInfo().setNoOfLogins(user.getAuthInfo().getNoOfLogins() + 1);
+                user.getAuthInfo().setPreviousLogin(user.getAuthInfo().getCurrentLogin());
+                user.getAuthInfo().setCurrentLogin(new java.sql.Timestamp(System.currentTimeMillis()));
                 //Log in activity
                 ActivityLog activityLog = ActivityLog.builder()
                         .type(ActivityLog.ActivityType.LOGIN)
@@ -157,11 +164,7 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<String> logout(String email) {
-
-        User user = userRepo.findByEmail(email).orElseThrow();
-        user.setPreviousLogin(new java.sql.Timestamp(System.currentTimeMillis()));
-        userRepo.save(user);
+    public ResponseEntity<String> logout() {
 
         ResponseCookie responseCookie = ResponseCookie.from("JWT", "")
                 .httpOnly(true)

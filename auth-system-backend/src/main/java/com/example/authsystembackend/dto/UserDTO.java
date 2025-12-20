@@ -1,13 +1,12 @@
 package com.example.authsystembackend.dto;
 
+import com.example.authsystembackend.entity.AuthInfo;
 import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -24,9 +23,7 @@ public class UserDTO {
     private boolean activity4Status;
     private boolean activity5Status;
     private Integer points;
-    private Date previousLogin;
-    private Date createdAt;
-    private Integer noOfLogins;
+    private AuthInfo authInfo;
     private String role;
 
     public User toEntity(UserDTO userDTO) {
@@ -41,10 +38,8 @@ public class UserDTO {
                 .activity4Status(userDTO.isActivity4Status())
                 .activity5Status(userDTO.isActivity5Status())
                 .points(userDTO.getPoints())
-                .previousLogin(userDTO.getPreviousLogin())
-                .createdAt(userDTO.getCreatedAt())
-                .noOfLogins(userDTO.getNoOfLogins())
                 .role(Role.valueOf(userDTO.getRole()))
+                .authInfo(userDTO.getAuthInfo())
                 .build();
     }
 
@@ -60,9 +55,7 @@ public class UserDTO {
                 .activity4Status(user.isActivity4Status())
                 .activity5Status(user.isActivity5Status())
                 .points(user.getPoints())
-                .createdAt(user.getCreatedAt())
-                .previousLogin(user.getPreviousLogin())
-                .noOfLogins(user.getNoOfLogins())
+                .authInfo(user.getAuthInfo())
                 .role(user.getRole().toString())
                 .build();
     }
