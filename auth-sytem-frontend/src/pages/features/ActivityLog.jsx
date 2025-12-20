@@ -2,13 +2,44 @@ import React, { use, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ActivityLogItem from '../../components/feature/ActivityLogItem'
 import CalendarView from '../../components/feature/CalendarView'
+import { getActivityLogsOfDate } from '../../api/profile'
 
 const ActivityLog = () => {
 
   const [date, setDate] = useState(new Date());
+  const [activityLogs, setActivityLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const onDateChange = (date) => {
-    setDate(date);
+  const onDateChange = async (selectedDate) => {
+    setDate(selectedDate);
+    setLoading(true);
+    try {
+      const response = await getActivityLogsOfDate(selectedDate);
+      setActivityLogs(response.content || []);
+    } catch (error) {
+      console.error('Error fetching activity logs for date', selectedDate, ':', error);
+      setActivityLogs([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  }
+
+  const mapSeverityToType = (severity) => {
+    const severityMap = {
+      'BASIC': 'Basic',
+      'MODERATE': 'Moderate',
+      'ATTENTION_REQUIRED': 'Attention Required'
+    };
+    return severityMap[severity] || 'Basic';
   }
 
   const formatDate = (date) => {
@@ -22,6 +53,7 @@ const ActivityLog = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    onDateChange(today);
   }, []);
 
   return (
@@ -45,10 +77,25 @@ const ActivityLog = () => {
         <div className='Date'>
           <h2 className='text-2xl md:3xl font-semibold text-gray-700'>{formatDate(date)}</h2>
         </div>
-        <ActivityLogItem time="10:00 AM" description="Logged in to the account" type="Moderate"/>
-        <ActivityLogItem time="10:30 AM" description="Changed password" type="Attention Required"/>
-        <ActivityLogItem time="11:00 AM" description="Upgraded role to PRO" type="Basic" />
-
+        
+        {loading ? (
+          <div className='text-center py-8'>
+            <p className='text-gray-600'>Loading activity logs...</p>
+          </div>
+        ) : activityLogs.length > 0 ? (
+          activityLogs.map((log) => (
+            <ActivityLogItem 
+              key={log.id}
+              time={formatTime(log.recordedAt)}
+              description={log.description}
+              type={mapSeverityToType(log.severity)}
+            />
+          ))
+        ) : (
+          <div className='text-center py-8 bg-white rounded-xl shadow-md border border-gray-200'>
+            <p className='text-gray-600'>No activity logs found for this date.</p>
+          </div>
+        )}
       </div>
     </div>
   )
