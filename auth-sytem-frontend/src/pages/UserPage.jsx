@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../api/auth';
 import AuthDetailCard from '../components/user-page/AuthDetailCard';
-import { CopyPlusIcon, Key, Lock, Logs, LucideBadgeInfo, Star, UserCog, UserPlus, UserStarIcon } from 'lucide-react';
+import { CopyPlusIcon, Crown, History, Key, Lock, LogInIcon, Logs, LucideBadgeInfo, Star, UserCog, UserPlus, UserStarIcon } from 'lucide-react';
 import InfoCard from '../components/user-page/InfoCard';
 import ActivityCard from '../components/user-page/ActivityCard';
 import { Link } from 'react-router-dom';
@@ -28,13 +28,12 @@ const UserPage = () => {
     const fetchUserData = async () => {
       try {
         const response = await getCurrentUser();
-        console.log("Fetched user data:", response);
         
         setUser(response);
         setRole(response.role || "User");
         localStorage.setItem('role', response.role || "User");
         setUserName(response.userName || "");
-        setNumberOfLogins(response.noOfLogins || 0);
+        setNumberOfLogins(response.authInfo.noOfLogins || 0);
         setPoints(response.points || 0);
         localStorage.setItem('points', response.points || 0);
         setActivity1Status(response.activity1Status || false);
@@ -42,14 +41,15 @@ const UserPage = () => {
         setActivity3Status(response.activity3Status || false);
         setActivity4Status(response.activity4Status || false);
         setActivity5Status(response.activity5Status || false);
+
         
-        if (response.previousLogin) {
-          setLastLoginDate(extractDate(response.previousLogin));
-          setLastLoginTime(extractTime(response.previousLogin));
+        if (response.authInfo.previousLogin) {
+          setLastLoginDate(extractDate(response.authInfo.previousLogin));
+          setLastLoginTime(extractTime(response.authInfo.previousLogin));
         }
-        if (response.createdAt) {
-          setAccountCreatedOnDate(extractDate(response.createdAt));
-          setAccountCreatedOnTime(extractTime(response.createdAt));
+        if (response.authInfo.createdAt) {
+          setAccountCreatedOnDate(extractDate(response.authInfo.createdAt));
+          setAccountCreatedOnTime(extractTime(response.authInfo.createdAt));
         }
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -59,7 +59,6 @@ const UserPage = () => {
   }, []);
 
   const extractDate = (dateString) => {
-    console.log("Extracting date from:", dateString);
     const date = new Date(dateString).toISOString().split('T')[0];
     const options = { year: 'numeric', month: 'short', day: '2-digit' };
     return new Date(date).toLocaleDateString('en-GB', options).toUpperCase();
@@ -74,7 +73,6 @@ const UserPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6 md:p-10">
       <div className="max-w-7xl mx-auto mb-4">
-        
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
             Welcome Back, <span className="text-green-600">{userName}</span>
@@ -85,9 +83,9 @@ const UserPage = () => {
             Hover over any card to see the theme toggle effect.'/>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           <AuthDetailCard title='A/C created on' heading={accountCreatedOnTime} subHeading={accountCreatedOnDate} icon={UserPlus}/>
-          <AuthDetailCard theme='dark' title='No of logins' heading={numberOfLogins} subHeading='times'/>
-          <AuthDetailCard title='Prev Login' heading={lastLoginTime} subHeading={lastLoginDate}/>
-          <AuthDetailCard theme='dark' title='A/C Status' heading={role} subHeading='Verified'/>
+          <AuthDetailCard theme='dark' title='No of logins' heading={numberOfLogins} subHeading='times' icon={LogInIcon} />
+          <AuthDetailCard title='Prev Login' heading={lastLoginTime} subHeading={lastLoginDate} icon={History}/>
+          <AuthDetailCard theme='dark' title='A/C Status' heading={role} subHeading='Verified' icon={Crown}/>
         </div>
 
         <InfoCard title='Activity Zone' instruction='Try some fun activities which will demonstrate the robustness of this platform.' icon={LucideBadgeInfo}/>
