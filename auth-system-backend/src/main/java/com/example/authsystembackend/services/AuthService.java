@@ -132,7 +132,7 @@ public class AuthService {
                 //Log in activity
                 ActivityLog activityLog = ActivityLog.builder()
                         .type(ActivityLog.ActivityType.LOGIN)
-                        .severity(ActivityLog.ActivitySeverity.BASIC)
+                        .severity(ActivityLog.ActivitySeverity.MODERATE)
                         .description("User logged in")
                         .recordedAt(new java.sql.Timestamp(System.currentTimeMillis()))
                         .user(user)
