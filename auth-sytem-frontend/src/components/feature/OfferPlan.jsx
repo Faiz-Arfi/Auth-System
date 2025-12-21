@@ -5,7 +5,8 @@ import { changeUserRole, checkPromoCode } from '../../api/profile';
 const OfferPlan = ({
   type = "type",
   features = ['feature1', 'feature2'],
-  price = "100"
+  price = "100",
+  promo
 }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [rolePrice, setRolePrice] = useState(price);
@@ -56,7 +57,7 @@ const OfferPlan = ({
         });
         localStorage.setItem('role', type);
         localStorage.setItem('points', response);
-        //reload page in 3 seconds
+        //reload page in 2 seconds
         setTimeout(() => {
           window.location.reload();
         }, 2000);
@@ -91,6 +92,12 @@ const OfferPlan = ({
           </div>
         ))
       }
+      {promo && (
+        <div className='bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-400 rounded-lg p-3 my-4'>
+          <p className='text-sm font-semibold text-gray-600 mb-1'>Available Promo Code:</p>
+          <p className='text-lg font-bold text-green-500'>{promo}</p>
+        </div>
+      )}
       <div className='promo flex flex-col items-center'>
         <div className='flex items-center w-full gap-2 my-3'>
           <input

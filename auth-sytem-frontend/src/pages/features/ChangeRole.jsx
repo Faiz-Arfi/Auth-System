@@ -5,9 +5,24 @@ import { Coins, Wallet } from 'lucide-react'
 
 const ChangeRole = () => {
   const noviceFeatures = [
-    'Access to basic features',
-    'Limited support',
+    'Access to Auth Info',
+    'Access to Activity Zone',
+    'Access to Dashboard',
+    'Access to Change Plan option',
     'Explore the website',
+  ];
+  const intermediateFeatures = [
+    'All Novice features',
+    'Access to reset passwords option',
+    
+  ];
+  const proFeatures = [
+    'All Intermediate features',
+    'Access to Activity Logs option'
+  ];
+  const legendFeatures = [
+    'All Pro features',
+    'Access to Profile Settings option'
   ];
 
   const currentPlan = localStorage.getItem('role');
@@ -52,10 +67,10 @@ const ChangeRole = () => {
       </div>
 
       <div className="offer-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <OfferPlan type='NOVICE' price='100'  features={noviceFeatures} />
-        <OfferPlan type='INTERMEDIATE' price='200'/>
-        <OfferPlan type='PRO' price='300'/>
-        <OfferPlan type='LEGEND' price='400'/>
+        <OfferPlan type='NOVICE' price='0'  features={noviceFeatures} />
+        <OfferPlan type='INTERMEDIATE' price='100' features={intermediateFeatures} promo='FREE'/>
+        <OfferPlan type='PRO' price='200' features={proFeatures} promo='FLAT100'/>
+        <OfferPlan type='LEGEND' price='500' features={legendFeatures} promo='FLAT200'/>
       </div>
 
     </div>
