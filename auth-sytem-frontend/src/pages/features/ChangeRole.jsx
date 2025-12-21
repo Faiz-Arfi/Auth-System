@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import OfferPlan from '../../components/feature/OfferPlan'
 import { Link } from 'react-router-dom'
 import { Coins, Wallet } from 'lucide-react'
@@ -27,6 +27,10 @@ const ChangeRole = () => {
 
   const currentPlan = localStorage.getItem('role');
   const userPoints = localStorage.getItem('points') || '0';
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
