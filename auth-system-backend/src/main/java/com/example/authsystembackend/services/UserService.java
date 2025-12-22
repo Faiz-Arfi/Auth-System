@@ -194,7 +194,7 @@ public class UserService {
             return ResponseEntity.ok(promoCodeDetails.getDiscount());
         }
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Promo Code is not valid for this role");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Promo Code is not valid for this role");
     }
 
     private Role parseRole(String role) {
@@ -213,6 +213,11 @@ public class UserService {
         User user = getUserByEmail(email);
         if(user.getRole() == Role.valueOf(role.toUpperCase())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are already on this plan");
+        }
+
+        // Check if user current role is already higher than the requested role
+        if(user.getRole().compareTo(Role.valueOf(role.toUpperCase())) >= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You cannot downgrade your plan");
         }
 
         int discount = 0;
@@ -240,6 +245,11 @@ public class UserService {
                 .recordedAt(new Timestamp(System.currentTimeMillis()))
                 .build();
         user.getActivityLogs().add(activityLog);
+
+        if(user.getRole() == Role.INTERMEDIATE && !user.isActivity1Status()) {
+            user.setActivity1Status(true);
+            user.setPoints(user.getPoints() + 50);
+        }
         userRepo.save(user);
         return ResponseEntity.ok().body(user.getPoints());
     }
@@ -247,16 +257,16 @@ public class UserService {
     private int getPriceForRole(String role) {
         switch(Role.valueOf(role.toUpperCase())) {
             case NOVICE -> {
+                return 0;
+            }
+            case INTERMEDIATE -> {
                 return 100;
             }
             case PRO -> {
-                return 300;
-            }
-            case INTERMEDIATE -> {
                 return 200;
             }
             case LEGEND -> {
-                return 400;
+                return 500;
             }
         }
         return Integer.MAX_VALUE;
