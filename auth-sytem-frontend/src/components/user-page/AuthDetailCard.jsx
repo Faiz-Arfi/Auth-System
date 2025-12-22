@@ -24,7 +24,7 @@ const AuthDetailCard = ({
                     <div className="text-3xl font-bold text-gray-800 mb-1">{heading}</div>
                     <div className="text-xl font-semibold text-gray-600">{subHeading}</div>
                 </div>
-                {heading !== "Intermediate" && (
+                {heading !== "INTERMEDIATE" && (
                     <div className="bg-gray-800 p-4 rounded-full">
                         <Icon className="text-gray-100 w-8 h-8" strokeWidth={2.5} />
                     </div>
@@ -39,7 +39,7 @@ const AuthDetailCard = ({
                     <div className="text-3xl font-bold text-gray-100 mb-1">{heading}</div>
                     <div className="text-xl font-semibold text-gray-400">{subHeading}</div>
                 </div>
-                {heading !== "Intermediate" && (
+                {heading !== "INTERMEDIATE" && (
                     <div className="bg-white p-4 rounded-full">
                         <Icon className="text-gray-800 w-8 h-8" strokeWidth={2.5} />
                     </div>

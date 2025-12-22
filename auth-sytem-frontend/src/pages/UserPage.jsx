@@ -94,15 +94,15 @@ const UserPage = () => {
 
           {/* Change Role */}
           <Link to="../user/change-role">
-            <ActivityCard theme='dark' title='Activity 1' heading='Change Role ' subHeading='Click here to Proceed' icon={UserStarIcon}/>
+            <ActivityCard theme='dark' title='Activity 1' heading='Change Role ' subHeading='Click here to Proceed' icon={UserStarIcon} coinValue={50}/>
           </Link>
 
           {/* change password */}
           <Link to="../user/change-password">
-            <ActivityCard theme='light' title='Activity 2' heading='Change Password ' subHeading='Click here to Proceed' icon={Key}/>
+            <ActivityCard theme='light' title='Activity 2' heading='Change Password ' subHeading='Click here to Proceed' icon={Key} coinValue={150}/>
           </Link>
           <Link to="../user/activity-log">
-            <ActivityCard theme='dark' title='Activity 3' heading='Activity Logs' subHeading='Click here to Proceed' icon={Logs}/>
+            <ActivityCard theme='dark' title='Activity 3' heading='Activity Logs' subHeading='Click here to Proceed' icon={Logs} coinValue={400}/>
           </Link>
           <Link to="../user/profile-setting">
             <ActivityCard theme='light' title='Activity 4' heading='Profile Setting' subHeading='Click here to Proceed' icon={UserCog}/>
