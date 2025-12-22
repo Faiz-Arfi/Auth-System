@@ -6,7 +6,8 @@ const OfferPlan = ({
   type = "type",
   features = ['feature1', 'feature2'],
   price = "100",
-  promo
+  promo,
+  toggleShowSucess
 }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [rolePrice, setRolePrice] = useState(price);
@@ -34,7 +35,6 @@ const OfferPlan = ({
         });
       }
     } catch (error) {
-      console.log(error);
       setRolePrice(price);
       const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Invalid promo code.';
       setMessage({ 
@@ -51,20 +51,12 @@ const OfferPlan = ({
     try {
       const response = await changeUserRole(type, promoCode);
       if (response !== undefined && response !== null) {
-        setMessage({ 
-          text: 'Role changed successfully! Reload in 2 seconds...', 
-          type: 'success' 
-        });
         localStorage.setItem('role', type);
         localStorage.setItem('points', response);
-        //reload page in 2 seconds
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        toggleShowSucess();
       }
     } catch (error) {
-      console.log(error);
-      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Failed to change role. Please try again.';
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || error.response?.data || 'Failed to change role. Please try again.';
       setMessage({ 
         text: typeof errorMessage === 'string' ? errorMessage : 'Failed to change role. Your session may have expired.',
         type: 'error' 

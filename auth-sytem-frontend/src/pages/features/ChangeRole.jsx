@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import OfferPlan from '../../components/feature/OfferPlan'
 import { Link } from 'react-router-dom'
 import { Coins, Wallet } from 'lucide-react'
+import RoleChangeConfirmation from '../../components/feature/RoleChangeConfirmation'
 
 const ChangeRole = () => {
   const noviceFeatures = [
@@ -28,12 +29,21 @@ const ChangeRole = () => {
   const currentPlan = localStorage.getItem('role');
   const userPoints = localStorage.getItem('points') || '0';
 
+  const [showSuccessModel, setShowSuccessModel] = useState(false);
+
+  const toggleShowSuccessModal = () => {
+    setShowSuccessModel(!showSuccessModel);
+  }
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
+      {showSuccessModel && (
+        <RoleChangeConfirmation onClose={toggleShowSuccessModal} />
+      )}
 
       <div className="navigations">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
@@ -71,10 +81,10 @@ const ChangeRole = () => {
       </div>
 
       <div className="offer-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <OfferPlan type='NOVICE' price='0'  features={noviceFeatures} />
-        <OfferPlan type='INTERMEDIATE' price='100' features={intermediateFeatures} promo='FREE'/>
-        <OfferPlan type='PRO' price='200' features={proFeatures} promo='FLAT100'/>
-        <OfferPlan type='LEGEND' price='500' features={legendFeatures} promo='FLAT200'/>
+        <OfferPlan type='NOVICE' price='0'  features={noviceFeatures} toggleShowSucess={toggleShowSuccessModal}/>
+        <OfferPlan type='INTERMEDIATE' price='100' features={intermediateFeatures} promo='FREE'toggleShowSucess={toggleShowSuccessModal}/>
+        <OfferPlan type='PRO' price='200' features={proFeatures} promo='FLAT100'toggleShowSucess={toggleShowSuccessModal}/>
+        <OfferPlan type='LEGEND' price='500' features={legendFeatures} promo='FLAT200'toggleShowSucess={toggleShowSuccessModal}/>
       </div>
 
     </div>
