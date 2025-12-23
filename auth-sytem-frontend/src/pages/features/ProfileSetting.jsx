@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import ProfileSettingCard from '../../components/feature/ProfileSettingCard'
 import ModifyAccountModal from '../../components/feature/ModifyAccountModal';
 import { editName } from '../../api/profile';
+import Unauthorized from '../../components/extras/Unauthorized';
 
 const ProfileSetting = () => {
 
@@ -49,7 +50,7 @@ const ProfileSetting = () => {
 
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
-
+      <Unauthorized roleRequired="LEGEND" />
       <div className="navigations">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
         <Link to="/user/profile-setting" className="text-green-800 hover:underline"> Setting</Link> &#8250;

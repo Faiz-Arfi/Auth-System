@@ -3,12 +3,25 @@ import { Link } from 'react-router-dom'
 import ActivityLogItem from '../../components/feature/ActivityLogItem'
 import CalendarView from '../../components/feature/CalendarView'
 import { getActivityLogsOfDate } from '../../api/profile'
+import Unauthorized from '../../components/extras/Unauthorized'
 
 const ActivityLog = () => {
 
   const [date, setDate] = useState(new Date());
   const [activityLogs, setActivityLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const roleValues = {
+    "NOVICE": 1,
+    "INTERMEDIATE": 2,
+    "PRO": 3,
+    "LEGEND": 4
+  }
+
+  const userRole = localStorage.getItem('role') || "NOVICE";
+  const userRoleValue = roleValues[userRole];
+  const requiredRoleValue = roleValues["PRO"];
+  const isAuthorized = userRoleValue >= requiredRoleValue;
 
   const onDateChange = async (selectedDate) => {
     setDate(selectedDate);
@@ -53,12 +66,14 @@ const ActivityLog = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    onDateChange(today);
+    if (isAuthorized) {
+      onDateChange(today);
+    }
   }, []);
 
   return (
     <div className='min-h-screen bg-gray-100 p-8 md:p-10'>
-      
+      <Unauthorized roleRequired="PRO" />
       <div className="navigations mb-6">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
         <Link to="/user/activity-log" className="text-green-800 hover:underline"> Activity Log</Link> &#8250;

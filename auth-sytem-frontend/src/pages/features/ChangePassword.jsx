@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Eye, EyeOff, Lock } from 'lucide-react'
 import { editPassword } from '../../api/profile'
+import Unauthorized from '../../components/extras/Unauthorized'
 
 const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -42,8 +43,13 @@ const ChangePassword = () => {
     }
   }
 
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
+      <Unauthorized roleRequired="INTERMEDIATE" />
       {/* Breadcrumb Navigation */}
       <div className="navigations mb-6">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
