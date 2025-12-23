@@ -94,24 +94,28 @@ const UserPage = () => {
 
           {/* Change Role */}
           <Link to="../user/change-role">
-            <ActivityCard theme='dark' title='Activity 1' heading='Change Role ' subHeading='Click here to Proceed' icon={UserStarIcon} coinValue={50}/>
+            <ActivityCard theme='dark' title='Activity 1' heading='Change Role ' subHeading='Click here to Proceed' icon={UserStarIcon} coinValue={50} isCompleted={activity1Status}/>
           </Link>
 
           {/* change password */}
           <Link to="../user/change-password">
-            <ActivityCard theme='light' title='Activity 2' heading='Change Password ' subHeading='Click here to Proceed' icon={Key} coinValue={150}/>
+            <ActivityCard theme='light' title='Activity 2' heading='Change Password ' subHeading='Click here to Proceed' icon={Key} coinValue={150} isCompleted={activity2Status}/>
           </Link>
           <Link to="../user/activity-log">
-            <ActivityCard theme='dark' title='Activity 3' heading='Activity Logs' subHeading='Click here to Proceed' icon={Logs} coinValue={400}/>
+            <ActivityCard theme='dark' title='Activity 3' heading='Activity Logs' subHeading='Click here to Proceed' icon={Logs} coinValue={400} isCompleted={activity3Status}/>
           </Link>
           <Link to="../user/profile-setting">
-            <ActivityCard theme='light' title='Activity 4' heading='Profile Setting' subHeading='Click here to Proceed' icon={UserCog}/>
+            <ActivityCard theme='light' title='Activity 4' heading='Profile Setting' subHeading='Click here to Proceed' icon={UserCog} isCompleted={activity4Status}/>
           </Link>
         </div>
         <InfoCard title='Bonus Activity' instruction='Complete this activity to get the legend tag on you status and transform the site .' icon={CopyPlusIcon}/>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-          <ActivityCard title='Last Activity' heading='Become a Legend ' subHeading='Click here to Proceed' icon={Star} isCompleted={false} coinValue={500}/>
-          <ActivityCard theme='dark' title='Last Activity' heading='Complete previous' subHeading='activities to Unlock' icon={Lock} isCompleted={false} coinValue={500}/>
+          {activity4Status ?
+          <ActivityCard title='Last Activity' heading='You Are Awesome ' subHeading='Click here to Proceed' icon={Star} isCompleted={activity5Status} coinValue={500}/> 
+          :
+          <ActivityCard theme='dark' title='Last Activity' heading='Complete previous' subHeading='activities to Unlock' icon={Lock} isCompleted={activity5Status} coinValue={500}/>
+        }
+          
         </div>
       </div>
 

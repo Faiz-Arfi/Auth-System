@@ -9,34 +9,23 @@ const ActivityCard = ({
     icon: Icon = FileWarning,
     coin: CoinsIcon = CheckCircle,
     coinValue = 100,
-    isCompleted = false,
-    onComplete = null
+    isCompleted = false
 }) => {
     const [isHovered, setIsHovered] = useState(false)
-    const [completed, setCompleted] = useState(isCompleted)
     const activeTheme = isHovered ? (theme === "light" ? "dark" : "light") : theme
-
-    const handleClick = () => {
-        if (!completed && onComplete) {
-            onComplete()
-            setCompleted(true)
-        }
-    }
 
     return (
         <div 
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={handleClick}
-            className={`${!completed && onComplete ? 'cursor-pointer' : ''}`}
         >
         {activeTheme === "light" ?
         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 border-b-8 border-b-gray-800 p-8 hover:shadow-1xl hover:scale-90 transition-all duration-300 max-w-sm relative">
             <div className={`absolute -top-3 -right-3 flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold shadow-lg text-white transition-all duration-500 ${
-                completed ? 'bg-green-500' : 'bg-gray-400'
+                isCompleted ? 'bg-green-500' : 'bg-gray-400'
             }`}>
                 <CoinsIcon className="w-5 h-5" strokeWidth={2.5} />
-                <span>{completed ? `+${coinValue}` : coinValue}</span>
+                <span>{isCompleted ? `+${coinValue}` : coinValue}</span>
             </div>
             <div className="flex items-center justify-between gap-6">
                 <div className="flex-1">
@@ -52,10 +41,10 @@ const ActivityCard = ({
         :
         <div className="bg-gray-800 rounded-2xl shadow-xl border-2 border-gray-800 border-b-8 border-b-gray-700 p-8 hover:shadow-1xl hover:scale-90 transition-all duration-300 max-w-sm relative">
             <div className={`absolute -top-3 -right-3 flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold shadow-lg text-white transition-all duration-500 ${
-                completed ? 'bg-green-500' : 'bg-gray-400'
+                isCompleted ? 'bg-green-500' : 'bg-gray-400'
             }`}>
                 <CoinsIcon className="w-5 h-5" strokeWidth={2.5} />
-                <span>{completed ? `+${coinValue}` : coinValue}</span>
+                <span>{isCompleted ? `+${coinValue}` : coinValue}</span>
             </div>
             <div className="flex items-center justify-between gap-6">
                 <div className="flex-1">
