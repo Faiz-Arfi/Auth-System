@@ -7,6 +7,7 @@ import com.example.authsystembackend.services.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,8 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @PreAuthorize("hasAnyRole('INTERMEDIATE','PRO','LEGEND')")
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(Authentication authentication, @RequestBody PasswordChangeDTO passwordChangeDTO) {
         if (authentication == null) {
@@ -30,6 +33,7 @@ public class UserController {
         return userService.changePassword(email, passwordChangeDTO.getNewPassword(), passwordChangeDTO.getOldPassword());
     }
 
+    @PreAuthorize("hasRole('LEGEND')")
     @PutMapping("/edit-profile")
     public ResponseEntity<?> editProfile(Authentication authentication, @RequestBody UserDTO userDTO) {
         if(authentication == null) {
@@ -39,6 +43,7 @@ public class UserController {
         return userService.editProfile(email, userDTO);
     }
 
+    @PreAuthorize("hasRole('LEGEND')")
     @PutMapping("/reset-account")
     public ResponseEntity<?> resetAccount (Authentication authentication) {
         if(authentication == null) {
@@ -48,6 +53,7 @@ public class UserController {
         return userService.resetAccount(email);
     }
 
+    @PreAuthorize("hasRole('LEGEND')")
     @DeleteMapping("/delete-account")
     public ResponseEntity<?> deleteAccount (Authentication authentication) {
         if(authentication == null) {
@@ -68,6 +74,7 @@ public class UserController {
         return userService.changePlan(email, promoCode, role);
     }
 
+    @PreAuthorize("hasAnyRole('PRO','LEGEND')")
     @GetMapping("/get-activity-log")
     public ResponseEntity<Page<ActivityLog>> getActivityLogOfDate (Authentication authentication, @RequestParam String date, Pageable p) {
         if(authentication == null) {
