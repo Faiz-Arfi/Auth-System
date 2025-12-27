@@ -80,6 +80,9 @@ public class AuthService {
         }
         AuthInfo authInfo = new AuthInfo();
         authInfo.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+        authInfo.setNoOfPasswordChanges(0);
+        authInfo.setNoOfProfileUpdates(0);
+        authInfo.setProvider(AuthInfo.Provider.LOCAL);
         authInfo.setUser(user);
         authInfo.setCurrentLogin(new java.sql.Timestamp(System.currentTimeMillis()));
         authInfo.setPreviousLogin(new java.sql.Timestamp(System.currentTimeMillis()));

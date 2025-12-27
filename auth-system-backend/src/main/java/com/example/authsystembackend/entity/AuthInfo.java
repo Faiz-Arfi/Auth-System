@@ -24,6 +24,12 @@ public class AuthInfo {
 
     private Integer noOfLogins;
 
+    private Integer noOfPasswordChanges;
+
+    private Integer noOfProfileUpdates;
+
+    private Provider provider;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -31,4 +37,7 @@ public class AuthInfo {
     @ToString.Exclude
     private User user;
 
+    public enum Provider {
+        LOCAL, GOOGLE, FACEBOOK, GITHUB, LINKEDIN
+    }
 }

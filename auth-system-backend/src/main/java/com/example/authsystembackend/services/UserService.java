@@ -71,6 +71,9 @@ public class UserService {
                 .currentLogin(new java.sql.Timestamp(System.currentTimeMillis()))
                 .noOfLogins(1)
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                .noOfPasswordChanges(0)
+                .noOfProfileUpdates(0)
+                .provider(AuthInfo.Provider.GOOGLE)
                 .user(newUser)
                 .build();
         newUser.setAuthInfo(authInfo);
@@ -117,8 +120,13 @@ public class UserService {
                                                         .recordedAt(new Timestamp(System.currentTimeMillis()))
                                                                 .build();
         user.getActivityLogs().add(activityLog);
+        user.getAuthInfo().setNoOfPasswordChanges(user.getAuthInfo().getNoOfPasswordChanges() + 1);
+        if(user.getAuthInfo().getNoOfPasswordChanges() == 1) {
+            user.setActivity2Status(true);
+            user.setPoints(user.getPoints() + 150);
+        }
         userRepo.save(user);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(user.getAuthInfo().getNoOfPasswordChanges());
     }
 
     @Transactional
@@ -138,8 +146,13 @@ public class UserService {
                 .build();
         user.setUserName(userDTO.getUserName());
         user.getActivityLogs().add(activityLog);
+        user.getAuthInfo().setNoOfProfileUpdates(user.getAuthInfo().getNoOfProfileUpdates() + 1);
+        if(user.getAuthInfo().getNoOfProfileUpdates() == 1) {
+            user.setActivity4Status(true);
+            user.setPoints(user.getPoints() + 100);
+        }
         userRepo.save(user);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(user.getAuthInfo().getNoOfProfileUpdates());
     }
 
     public ResponseEntity<?> resetAccount(String email) {
@@ -162,6 +175,8 @@ public class UserService {
                 .build();
 
         user.getAuthInfo().setNoOfLogins(0);
+        user.getAuthInfo().setNoOfPasswordChanges(0);
+        user.getAuthInfo().setNoOfProfileUpdates(0);
 
         userRepo.save(newUser);
         return ResponseEntity.ok().build();
@@ -279,6 +294,12 @@ public class UserService {
         }
 
         User user = getUserByEmail(email);
+        if((user.getRole() == Role.PRO || user.getRole() == Role.LEGEND) && !user.isActivity3Status()) {
+            user.setActivity3Status(true);
+            user.setPoints(user.getPoints() + 400);
+            userRepo.save(user);
+        }
+
         java.sql.Date sqlDate = java.sql.Date.valueOf(date);
 
         Date startDay = new Date(sqlDate.getTime());
