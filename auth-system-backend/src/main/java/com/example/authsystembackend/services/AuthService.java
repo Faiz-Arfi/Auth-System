@@ -182,4 +182,40 @@ public class AuthService {
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .body("Logout successful");
     }
+
+    public String forgetPassword(String email) {
+        User user = userRepo.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        user.setResetPasswordCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
+        emailService.sendPasswordResetMail(user.getEmail(), user.getResetPasswordCode());
+        userRepo.save(user);
+        return "If that email exists in our system, you will receive a link.";
+    }
+
+    public String updatePassword(String token, String newPassword) {
+        String email = jwtService.extractEmail(token);
+        User user = userRepo.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        if (!user.getResetPasswordCode().equals(token)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid token");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordCode(null);
+        //log the activity
+        ActivityLog resetActivity = ActivityLog.builder()
+                .description("Password reset via email verification")
+                .recordedAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                .severity(ActivityLog.ActivitySeverity.ATTENTION_REQUIRED)
+                .type(ActivityLog.ActivityType.PASSWORD_CHANGE)
+                .user(user)
+                .build();
+        user.getActivityLogs().add(resetActivity);
+        userRepo.save(user);
+        return "Password updated successfully.";
+    }
 }

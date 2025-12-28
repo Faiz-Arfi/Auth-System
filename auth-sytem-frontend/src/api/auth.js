@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import axiosInstance from "./axiosConfig";
 
 const baseUrl = 'http://localhost:8080/auth';
@@ -47,6 +48,32 @@ export const getCurrentUser = async () => {
         );
         return response.data;
     } catch (error) {
+        throw error;
+    }
+}
+
+export const forgetPassword = async (email) => {
+    try {
+        const response = await axiosInstance.post(
+            `${baseUrl}/forget-password`,
+            {},
+            { params: { email } }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const confirmResetPassword = async (token, newPassword) => {
+    try {
+        const response = await axiosInstance.post(
+            `${baseUrl}/confirm-reset-password`,
+            { token, newPassword }
+        );
+        return response.data;
+    }
+    catch (error) {
         throw error;
     }
 }

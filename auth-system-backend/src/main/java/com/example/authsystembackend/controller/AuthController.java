@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -64,4 +66,17 @@ public class AuthController {
         return ResponseEntity.ok(new UserDTO().toDTO(user));
     }
 
+    @PostMapping("/forget-password")
+    public String forgetPassword(@RequestParam String email) {
+        return authService.forgetPassword(email);
+    }
+
+    @PostMapping("/confirm-reset-password")
+    public ResponseEntity<?> confirmReset (@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String newPassword = request.get("newPassword");
+
+        String message = authService.updatePassword(token, newPassword);
+        return ResponseEntity.ok(message);
+    }
 }

@@ -12,6 +12,8 @@ import ChangeRole from './pages/features/ChangeRole'
 import ChangePassword from './pages/features/ChangePassword'
 import ActivityLog from './pages/features/ActivityLog'
 import ProfileSetting from './pages/features/ProfileSetting'
+import ResetPassword from './pages/ResetPassword'
+import UpdatePassword from './pages/UpdatePassword'
 
 function App() {
 
@@ -52,6 +54,22 @@ function App() {
       element: <>
         <Navbar />
         <AuthPage />
+      </>,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/reset-password",
+      element: <>
+        <Navbar />
+        <ResetPassword />
+      </>,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/update-password",
+      element: <>
+        <Navbar />
+        <UpdatePassword />
       </>,
       errorElement: <ErrorPage />,
     },

@@ -4,7 +4,7 @@ import ShowPassIcon from '../assets/password-show.svg'
 import HidePassIcon from '../assets/password-hide.svg'
 import AuthMessage from './AuthMessage'
 import { login, register } from '../api/auth'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AuthForm = ({ mode = "register" }) => {
     const [showPass, setShowPass] = useState(false);
@@ -174,8 +174,14 @@ const AuthForm = ({ mode = "register" }) => {
                     className='absolute right-3 top-1/2 -translate-y-1/2 hover:cursor-pointer'>
                     <img src={showPass ? ShowPassIcon : HidePassIcon} alt="show password" className='w-6' />
                 </button>
-            </div>
-            {isLogin ? null :
+            </div>            {isLogin ? 
+                <div className='w-full text-right'>
+                    <Link to="/reset-password" className='text-sm text-blue-600 hover:text-blue-800 hover:underline'>
+                        Forgot Password?
+                    </Link>
+                </div>
+                : null
+            }            {isLogin ? null :
                 <div className="relative w-full">
                     <label
                         htmlFor='confirmPassword'

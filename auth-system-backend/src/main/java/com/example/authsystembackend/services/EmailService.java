@@ -34,6 +34,13 @@ public class EmailService {
         sendEmailWithToken(toEmail, subject, body, actionUrl);
     }
 
+    public void sendPasswordResetMail(String email, String resetPasswordCode) {
+        String subject = "Password Reset";
+        String body = "Click the button below to reset your password:";
+
+        String actionUrl = baseUrl + "/reset-password?token=" + resetPasswordCode;
+        sendEmailWithToken(email, subject, body, actionUrl);
+    }
 
     private void sendEmailWithToken(String toEmail, String subject, String body, String actionUrl) {
         try {

@@ -31,7 +31,9 @@ public class VerificationController {
         User user = userRepo.findByEmail(email).orElse(null);
 
         if(user == null || user.getVerificationCode() == null || !user.getVerificationCode().equals(token)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(frontEndUrl + "/login?error=invalid-token"))
+                    .build();
         }
 
         user.setEmailVerified(true);
@@ -40,6 +42,28 @@ public class VerificationController {
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(frontEndUrl + "/login?verified=true"))
+                .build();
+    }
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token) {
+        String email = jwtService.extractEmail(token);
+        User user = userRepo.findByEmail(email).orElse(null);
+
+        if(user == null || user.getResetPasswordCode() == null || !user.getResetPasswordCode().equals(token)) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(frontEndUrl + "/login?error=invalid-token"))
+                    .build();
+        }
+
+        if(!jwtService.isTokenValid(token, user)) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(frontEndUrl + "/login?error=invalid-token"))
+                    .build();
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(frontEndUrl + "/update-password?token=" + token))
                 .build();
     }
 }
