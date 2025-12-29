@@ -78,6 +78,18 @@ export const changeUserRole = async (role, promoCode) => {
     }
 }
 
+export const skipActivity2ForUser = async () => {
+    try {
+        const response = await axiosInstance.put(
+            `${baseUrl}/skip-activity-2`,
+            {}
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const getActivityLogsOfDate = async (date) => {
     // format for api call YYYY-MM-DD
     const year = date.getFullYear();

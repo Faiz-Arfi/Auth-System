@@ -24,6 +24,7 @@ const UserPage = () => {
   const [activity5Status, setActivity5Status] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     // Fetch user data from backend
     const fetchUserData = async () => {
       try {
@@ -41,6 +42,9 @@ const UserPage = () => {
         setActivity3Status(response.activity3Status || false);
         setActivity4Status(response.activity4Status || false);
         setActivity5Status(response.activity5Status || false);
+        localStorage.setItem('activity2Status', response.activity2Status || false);
+        localStorage.setItem('activity3Status', response.activity3Status || false);
+        localStorage.setItem('activity4Status', response.activity4Status || false);
 
         
         if (response.authInfo.previousLogin) {

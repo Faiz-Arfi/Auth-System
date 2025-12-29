@@ -1,14 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ProfileSettingCard from '../../components/feature/ProfileSettingCard'
 import ModifyAccountModal from '../../components/feature/ModifyAccountModal';
 import { editName } from '../../api/profile';
 import Unauthorized from '../../components/extras/Unauthorized';
+import ErrorModal from '../../components/extras/ErrorModal';
+import SucessModal from '../../components/extras/SucessModal';
+import InfoCardWithButton from '../../components/extras/InfoCardWithButton';
+import { NotebookText } from 'lucide-react';
+import CoinGained from '../../components/extras/CoinGained';
 
 const ProfileSetting = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
+
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [showCoinModal, setShowCoinModal] = useState(false)
+  const [showActivity4Note, setShowActivity4Note] = useState(
+    localStorage.getItem("activity4Status") !== 'true'
+  )
 
   const toggleResetModal = () => {
     setShowResetModal(!showResetModal);
@@ -25,7 +39,7 @@ const ProfileSetting = () => {
   const handleProfileEdit = async (e) => {
     e.preventDefault();
     const messageDiv = document.querySelector('.Message');
-    if(formData.userName.trim() === '') {
+    if (formData.userName.trim() === '') {
       messageDiv.innerHTML = `<p class="text-yellow-600 font-semibold">Name cannot be empty.</p>`;
       return;
     }
@@ -33,9 +47,16 @@ const ProfileSetting = () => {
     // api call to edit name
     try {
       const response = await editName(formData.userName);
-      messageDiv.innerHTML = `<p class="text-green-600 font-semibold">Profile updated successfully!</p>`;
+      if (response === 1) {
+        setShowCoinModal(true);
+        localStorage.setItem("activity4Status", true);
+        setShowActivity4Note(false);
+      }
+      setSuccessMessage('Profile updated successfully!');
+      setShowSuccessModal(true);
     } catch (error) {
-      messageDiv.innerHTML = `<p class="text-red-600 font-semibold">Failed to update profile. Please try again.</p>`;
+      setErrorMessage(error.response.data || 'Failed to update profile. Please try again.');
+      setShowErrorModal(true);
       return;
     }
 
@@ -46,15 +67,33 @@ const ProfileSetting = () => {
       inputField.value = '';
     }
   }
-  
+
+  const closeErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
+  }
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    setSuccessMessage('');
+  }
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
       <Unauthorized roleRequired="LEGEND" />
+      <ErrorModal errorMessage={errorMessage} onClose={closeErrorModal} />
+      <SucessModal successMessage={successMessage} onClose={closeSuccessModal} />
+      {showCoinModal && <CoinGained coinValue={100} onClose={() => setShowCoinModal(false)} />}
       <div className="navigations">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
         <Link to="/user/profile-setting" className="text-green-800 hover:underline"> Setting</Link> &#8250;
       </div>
+
+      {showActivity4Note && <InfoCardWithButton title={"Actity-4 Note"} description={"Simply Change your name to Complete this activity"} icon={NotebookText} />}
 
       <div className="heading mt-4 mb-6">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
@@ -65,7 +104,7 @@ const ProfileSetting = () => {
       {/* change name */}
       <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-200">
         <form
-          onSubmit={handleProfileEdit} 
+          onSubmit={handleProfileEdit}
           className="space-y-6 max-w-lg">
           <div>
             <label htmlFor="userName" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -92,10 +131,10 @@ const ProfileSetting = () => {
       </div>
       {/* Actions cards */}
       <div>
-        <ProfileSettingCard name='Change Password' description='Click Here to update your Password' link='/user/change-password'/>
+        <ProfileSettingCard name='Change Password' description='Click Here to update your Password' link='/user/change-password' />
         <ProfileSettingCard name='Change Role' description='Time for a role switch, click me' link='/user/change-role' />
-        <ProfileSettingCard name='Reset Account' description='Need a fresh start, just reset you account' toggleModal={toggleResetModal}/>
-        <ProfileSettingCard name='Delete Account' description='Remember you can always create a new one ;)' toggleModal={toggleDeleteModal}/>
+        <ProfileSettingCard name='Reset Account' description='Need a fresh start, just reset you account' toggleModal={toggleResetModal} />
+        <ProfileSettingCard name='Delete Account' description='Remember you can always create a new one ;)' toggleModal={toggleDeleteModal} />
       </div>
 
       {/* Reset Modal */}

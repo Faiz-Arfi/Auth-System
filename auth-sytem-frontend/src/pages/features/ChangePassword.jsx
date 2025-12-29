@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Eye, EyeOff, Lock } from 'lucide-react'
-import { editPassword } from '../../api/profile'
+import { Eye, EyeOff, Lock, NotebookText } from 'lucide-react'
+import { editPassword, skipActivity2ForUser } from '../../api/profile'
 import Unauthorized from '../../components/extras/Unauthorized'
+import InfoCardWithButton from '../../components/extras/InfoCardWithButton'
+import ErrorModal from '../../components/extras/ErrorModal'
+import CoinGained from '../../components/extras/CoinGained'
+import SucessModal from '../../components/extras/SucessModal'
 
 const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  
+
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [showCoinModal, setShowCoinModal] = useState(false)
+  const [showActivity2Note, setShowActivity2Note] = useState(
+    localStorage.getItem("activity2Status") !== 'true'
+  )
+
   const [formData, setFormData] = useState({
     oldPassword: '',
     newPassword: '',
@@ -28,33 +41,70 @@ const ChangePassword = () => {
     try {
       const response = await editPassword(formData);
       console.log('Password changed successfully:', response);
-      alert('Password changed successfully!');
       setFormData({
         oldPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
+      setSuccessMessage('Password changed successfully!');
+      setShowSuccessModal(true);
+      if (response === 1) {
+        setShowCoinModal(true);
+        localStorage.setItem("activity2Status", true);
+        setShowActivity2Note(false);
+      }
     } catch (error) {
       // check error status code
-      if(error.response && error.response.status === 500) {
+      if (error.response && error.response.status === 500) {
         // window.location.reload();
       }
       console.error('Error changing password:', error);
     }
   }
 
+  const skipActivity = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await skipActivity2ForUser();
+      console.log('Activity 2 skipped successfully:', response);
+      setShowCoinModal(true);
+      localStorage.setItem("activity2Status", true);
+      setShowActivity2Note(false);
+
+    } catch (error) {
+      setErrorMessage(error.response.data || 'Failed to skip Activity 2. Please try again later.');
+      setShowErrorModal(true);
+      console.error('Error skipping activity 2:', error);
+    }
+  }
+
+  const closeErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
+  }
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    setSuccessMessage('');
+  }
+
   useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className='min-h-screen bg-gray-100 p-6 md:p-10'>
       <Unauthorized roleRequired="INTERMEDIATE" />
+      <ErrorModal errorMessage={errorMessage} onClose={closeErrorModal} />
+      <SucessModal successMessage={successMessage} onClose={closeSuccessModal} />
+      {showCoinModal && <CoinGained coinValue={150} onClose={() => setShowCoinModal(false)} />}
       {/* Breadcrumb Navigation */}
       <div className="navigations mb-6">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
         <Link to="/user/change-password" className="text-green-800 hover:underline"> Change Password</Link> &#8250;
       </div>
+
+      {showActivity2Note && <InfoCardWithButton title={"Actity-2 Note"} description={"Skip this activity if you logged in using OAuth (Google) "} buttonText={"Skip"} onButtonClick={skipActivity} icon={NotebookText} />}
 
       {/* Page Header */}
       <div className="mb-8">

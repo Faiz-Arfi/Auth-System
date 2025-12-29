@@ -4,12 +4,16 @@ import ActivityLogItem from '../../components/feature/ActivityLogItem'
 import CalendarView from '../../components/feature/CalendarView'
 import { getActivityLogsOfDate } from '../../api/profile'
 import Unauthorized from '../../components/extras/Unauthorized'
+import CoinGained from '../../components/extras/CoinGained'
 
 const ActivityLog = () => {
 
   const [date, setDate] = useState(new Date());
   const [activityLogs, setActivityLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showCoinModal, setShowCoinModal] = useState(
+    localStorage.getItem("activity3Status") === 'false'
+  );
 
   const roleValues = {
     "NOVICE": 1,
@@ -23,6 +27,10 @@ const ActivityLog = () => {
   const requiredRoleValue = roleValues["PRO"];
   const isAuthorized = userRoleValue >= requiredRoleValue;
 
+  const handleCoinModalClose = () => {
+    setShowCoinModal(false);
+    localStorage.setItem("activity3Status", true);
+  }
   const onDateChange = async (selectedDate) => {
     setDate(selectedDate);
     setLoading(true);
@@ -74,6 +82,7 @@ const ActivityLog = () => {
   return (
     <div className='min-h-screen bg-gray-100 p-8 md:p-10'>
       <Unauthorized roleRequired="PRO" />
+      {showCoinModal && isAuthorized && <CoinGained coinValue={400} onClose={handleCoinModalClose} />}
       <div className="navigations mb-6">
         <Link to="../user/dashboard" className="text-blue-600 hover:underline">Dashboard</Link> &#8250;
         <Link to="/user/activity-log" className="text-green-800 hover:underline"> Activity Log</Link> &#8250;
