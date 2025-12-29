@@ -308,4 +308,21 @@ public class UserService {
         return activityLogRepo.findByUserIdAndRecordedAtBetween(user.getId(), startDay, endDay, p);
 
     }
+
+    public ResponseEntity<String> skipActivity2(String email) {
+        User user = getUserByEmail(email);
+        if(user.getAuthInfo().getProvider().equals(AuthInfo.Provider.LOCAL)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Only OAuth users can skip activity 2");
+        }
+
+        if(user.isActivity2Status()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have already completed activity 2");
+        }
+
+        user.setActivity2Status(true);
+        user.setPoints(user.getPoints() + 150);
+        userRepo.save(user);
+        return ResponseEntity.ok().build();
+    }
+
 }

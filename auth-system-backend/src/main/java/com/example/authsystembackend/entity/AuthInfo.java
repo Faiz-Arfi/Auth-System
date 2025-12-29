@@ -28,6 +28,7 @@ public class AuthInfo {
 
     private Integer noOfProfileUpdates;
 
+    @Enumerated(EnumType.STRING)
     private Provider provider;
 
     @OneToOne

@@ -6,6 +6,7 @@ import com.example.authsystembackend.entity.ActivityLog;
 import com.example.authsystembackend.services.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -83,5 +84,15 @@ public class UserController {
         String email = authentication.getName();
         Page<ActivityLog> activityLogs = userService.getActivityLogOfDate(email, date, p);
         return ResponseEntity.ok(activityLogs);
+    }
+
+    @PreAuthorize("hasAnyRole('INTERMEDIATE','PRO','LEGEND')")
+    @PutMapping("/skip-activity-2")
+    public ResponseEntity<String> skipActivity2 (Authentication authentication) {
+        if(authentication == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Session expired. Please login again");
+        }
+        String email = authentication.getName();
+        return userService.skipActivity2(email);
     }
 }
