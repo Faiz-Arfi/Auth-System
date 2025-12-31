@@ -59,7 +59,7 @@ const Navbar = ( {isLoggedIn} ) => {
                     </li>
                 </>
                 :
-                <li className="bg-gray-800 hover:bg-gray-600 px-4 py-2 rounded-md"><Link to="/login" className="text-amber-50">Login/Register</Link></li>
+                <li className="bg-gray-800 hover:bg-gray-600 px-4 py-2 rounded-md"><Link to="/login" className="text-amber-50">Let's Go</Link></li>
                 }
             </ul>
         </nav>
