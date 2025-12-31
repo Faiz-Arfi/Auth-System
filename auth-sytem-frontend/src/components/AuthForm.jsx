@@ -93,42 +93,42 @@ const AuthForm = ({ mode = "register" }) => {
     return (<>
 
         {isLogin ?
-            <div className='action-text w-full text-center'>
-                <h1 className='text-4xl font-bold mb-2 '>Welcome Back,</h1>
-                <p className='text-gray-600'>Please Log-in to continue</p>
+            <div className='action-text w-full text-center px-4'>
+                <h1 className='text-2xl md:text-3xl lg:text-4xl font-bold mb-2'>Welcome Back,</h1>
+                <p className='text-sm md:text-base text-gray-600'>Please Log-in to continue</p>
             </div>
             :
-            <div className='action-text w-full text-center'>
-                <h1 className='text-4xl font-bold mb-2 '>Are you new User?</h1>
-                <p className='text-gray-600'>Please Register yourself</p>
+            <div className='action-text w-full text-center px-4'>
+                <h1 className='text-2xl md:text-3xl lg:text-4xl font-bold mb-2'>Are you new User?</h1>
+                <p className='text-sm md:text-base text-gray-600'>Please Register yourself</p>
             </div>
         }
-        <div className='w-full flex flex-col gap-1'>
+        <div className='w-full flex flex-col gap-1 px-4 md:px-0'>
             <AuthMessage message={error} type="error" />
             <AuthMessage message={warn} type="warn" />
             <AuthMessage message={success} type="success" />
             <AuthMessage message={info} type="info" />
         </div>
-        <div onClick={handleGoogleAuth} className="goole-auth w-full">
-            <a className='w-full flex items-center justify-center gap-3 border-2 border-gray-400 px-5 py-3 rounded-md hover:cursor-pointer hover:bg-gray-100 transition'>
-                <img src={GoogleLogo} alt="google-logo" className='w-6 h-6' />
+        <div onClick={handleGoogleAuth} className="goole-auth w-full px-4 md:px-0">
+            <a className='w-full flex items-center justify-center gap-3 border-2 border-gray-400 px-4 md:px-5 py-2.5 md:py-3 rounded-md hover:cursor-pointer hover:bg-gray-100 transition text-sm md:text-base'>
+                <img src={GoogleLogo} alt="google-logo" className='w-5 h-5 md:w-6 md:h-6' />
                 <span>Continue with Google</span>
             </a>
         </div>
         <form
-            className='flex flex-col gap-4 w-full'
+            className='flex flex-col gap-3 md:gap-4 w-full px-4 md:px-0'
             onSubmit={isLogin ? handleLogin : handleRegister}
         >
-            <h2 className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-6">
+            <h2 className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4 md:gap-x-6">
                 <span className="block h-px bg-gray-400" />
-                <span className='text-gray-400'>Or</span>
+                <span className='text-sm md:text-base text-gray-400'>Or</span>
                 <span className="block h-px bg-gray-400" />
             </h2>
             {isLogin ? null :
                 <div className='relative w-full'>
                     <label
                         htmlFor="username"
-                        className="absolute -top-2 left-3 bg-white px-1 text-sm text-gray-600"
+                        className="absolute -top-2 left-3 bg-white px-1 text-xs md:text-sm text-gray-600"
                     >
                         Username
                     </label>
@@ -136,7 +136,7 @@ const AuthForm = ({ mode = "register" }) => {
                         type='text'
                         id='username'
                         onChange={(e) => setUserName(e.target.value)}
-                        className='border border-gray-400 rounded px-4 py-3 w-full focus:outline-none focus:border-green-500'
+                        className='border border-gray-400 rounded px-3 md:px-4 py-2.5 md:py-3 w-full focus:outline-none focus:border-green-500 text-sm md:text-base'
                     />
                 </div>
             }
@@ -144,7 +144,7 @@ const AuthForm = ({ mode = "register" }) => {
             <div className='relative w-full'>
                 <label
                     htmlFor='email'
-                    className='absolute -top-2 left-4 bg-white text-sm text-gray-600'
+                    className='absolute -top-2 left-4 bg-white text-xs md:text-sm text-gray-600'
                 >
                     Email
                 </label>
@@ -152,13 +152,13 @@ const AuthForm = ({ mode = "register" }) => {
                     type='email'
                     id='email'
                     onChange={(e) => setEmail(e.target.value)}
-                    className='border border-gray-400 rounded px-4 py-3 w-full focus:outline-none focus:border-green-500'
+                    className='border border-gray-400 rounded px-3 md:px-4 py-2.5 md:py-3 w-full focus:outline-none focus:border-green-500 text-sm md:text-base'
                 />
             </div>
             <div className="relative w-full">
                 <label
                     htmlFor='password'
-                    className='absolute -top-2 left-4 bg-white text-sm text-gray-600'
+                    className='absolute -top-2 left-4 bg-white text-xs md:text-sm text-gray-600'
                 >
                     Password
                 </label>
@@ -166,17 +166,17 @@ const AuthForm = ({ mode = "register" }) => {
                     type={showPass ? 'text' : 'password'}
                     id='password'
                     onChange={(e) => setPassword(e.target.value)}
-                    className='border border-gray-400 rounded px-4 py-3 pr-10 w-full focus:outline-none focus:border-green-500'
+                    className='border border-gray-400 rounded px-3 md:px-4 py-2.5 md:py-3 pr-10 w-full focus:outline-none focus:border-green-500 text-sm md:text-base'
                 />
                 <button
                     type='button'
                     onClick={() => setShowPass(!showPass)}
                     className='absolute right-3 top-1/2 -translate-y-1/2 hover:cursor-pointer'>
-                    <img src={showPass ? ShowPassIcon : HidePassIcon} alt="show password" className='w-6' />
+                    <img src={showPass ? ShowPassIcon : HidePassIcon} alt="show password" className='w-5 md:w-6' />
                 </button>
             </div>            {isLogin ? 
                 <div className='w-full text-right'>
-                    <Link to="/reset-password" className='text-sm text-blue-600 hover:text-blue-800 hover:underline'>
+                    <Link to="/reset-password" className='text-xs md:text-sm text-blue-600 hover:text-blue-800 hover:underline'>
                         Forgot Password?
                     </Link>
                 </div>
@@ -185,7 +185,7 @@ const AuthForm = ({ mode = "register" }) => {
                 <div className="relative w-full">
                     <label
                         htmlFor='confirmPassword'
-                        className='absolute -top-2 left-4 bg-white text-sm text-gray-600'
+                        className='absolute -top-2 left-4 bg-white text-xs md:text-sm text-gray-600'
                     >
                         Confirm Password
                     </label>
@@ -193,20 +193,20 @@ const AuthForm = ({ mode = "register" }) => {
                         type={showPass ? 'text' : 'password'}
                         id='confirmPassword'
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className='border border-gray-400 rounded px-4 py-3 pr-10 w-full focus:outline-none focus:border-green-500'
+                        className='border border-gray-400 rounded px-3 md:px-4 py-2.5 md:py-3 pr-10 w-full focus:outline-none focus:border-green-500 text-sm md:text-base'
                     />
                     <button
                         type='button'
                         onClick={() => setShowPass(!showPass)}
                         className='absolute right-3 top-1/2 -translate-y-1/2 hover:cursor-pointer'>
-                        <img src={showPass ? ShowPassIcon : HidePassIcon} alt="show password" className='w-6' />
+                        <img src={showPass ? ShowPassIcon : HidePassIcon} alt="show password" className='w-5 md:w-6' />
                     </button>
                 </div>
             }
             {isLogin ?
-                <button type="submit" className='bg-gray-800 text-white px-5 py-3 rounded-md hover:bg-gray-600 transition'>Log-in</button>
+                <button type="submit" className='bg-gray-800 text-white px-4 md:px-5 py-2.5 md:py-3 rounded-md hover:bg-gray-600 transition text-sm md:text-base font-medium'>Log-in</button>
                 :
-                <button type="submit" className='bg-gray-800 text-white px-5 py-3 rounded-md hover:bg-gray-600 transition'>Register</button>
+                <button type="submit" className='bg-gray-800 text-white px-4 md:px-5 py-2.5 md:py-3 rounded-md hover:bg-gray-600 transition text-sm md:text-base font-medium'>Register</button>
             }
         </form>
     </>
