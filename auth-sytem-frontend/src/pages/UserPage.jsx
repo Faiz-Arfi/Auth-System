@@ -45,6 +45,7 @@ const UserPage = () => {
         localStorage.setItem('activity2Status', response.activity2Status || false);
         localStorage.setItem('activity3Status', response.activity3Status || false);
         localStorage.setItem('activity4Status', response.activity4Status || false);
+        localStorage.setItem('activity5Status', response.activity5Status || false);
 
         
         if (response.authInfo.previousLogin) {
@@ -115,7 +116,9 @@ const UserPage = () => {
         <InfoCard title='Bonus Activity' instruction='Complete this activity to get the legend tag on you status and transform the site .' icon={CopyPlusIcon}/>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {activity4Status ?
-          <ActivityCard title='Last Activity' heading='You Are Awesome ' subHeading='Click here to Proceed' icon={Star} isCompleted={activity5Status} coinValue={500}/> 
+          <Link to="../user/awesome-activity">
+            <ActivityCard title='Last Activity' heading='You Are Awesome ' subHeading='Click here to Proceed' icon={Star} isCompleted={activity5Status} coinValue={500}/> 
+          </Link>
           :
           <ActivityCard theme='dark' title='Last Activity' heading='Complete previous' subHeading='activities to Unlock' icon={Lock} isCompleted={activity5Status} coinValue={500}/>
         }

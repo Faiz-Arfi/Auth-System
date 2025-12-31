@@ -107,3 +107,15 @@ export const getActivityLogsOfDate = async (date) => {
         throw error;
     }
 }
+
+export const completeActivity5 = async () => {
+    try {
+        const response = await axiosInstance.post(
+            `${baseUrl}/complete-activity-5`,
+            {}
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

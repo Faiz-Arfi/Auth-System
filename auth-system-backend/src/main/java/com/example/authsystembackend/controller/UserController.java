@@ -71,6 +71,9 @@ public class UserController {
 
     @PostMapping("/change-plan")
     public ResponseEntity<?> changePlan (Authentication authentication, @RequestParam String promoCode, @RequestParam String role) {
+        if(authentication == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Session expired. Please login again");
+        }
         String email = authentication.getName();
         return userService.changePlan(email, promoCode, role);
     }
@@ -94,5 +97,15 @@ public class UserController {
         }
         String email = authentication.getName();
         return userService.skipActivity2(email);
+    }
+
+    @PreAuthorize("hasRole('LEGEND')")
+    @PostMapping("/complete-activity-5")
+    public ResponseEntity<String> completeActivity5 (Authentication authentication) {
+        if(authentication == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Session expired. Please login again");
+        }
+        String email = authentication.getName();
+        return userService.completeActivity5(email);
     }
 }

@@ -14,6 +14,7 @@ import ActivityLog from './pages/features/ActivityLog'
 import ProfileSetting from './pages/features/ProfileSetting'
 import ResetPassword from './pages/ResetPassword'
 import UpdatePassword from './pages/UpdatePassword'
+import AwsomeActivity from './pages/AwsomeActivity'
 
 function App() {
 
@@ -114,6 +115,15 @@ function App() {
         </ProtectedRoutes>
       </>,
       // errorElement: <ErrorPage />,
+    },
+    {
+      path: "/user/awesome-activity",
+      element: <>
+        <ProtectedRoutes>
+          <Navbar isLoggedIn={true} />
+          <AwsomeActivity />
+        </ProtectedRoutes>
+      </>
     },
     {
       path: "*",

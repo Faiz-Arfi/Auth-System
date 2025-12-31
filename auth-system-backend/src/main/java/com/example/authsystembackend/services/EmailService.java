@@ -96,4 +96,89 @@ public class EmailService {
                             </div>
                 """.formatted(body, actionUrl, java.time.Year.now().getValue());
     }
+
+    public void sendAccomplishmentEmail(String toEmail, String userName) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+            MimeMessageHelper helper = new MimeMessageHelper(
+                    mimeMessage,
+                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name()
+            );
+            helper.setFrom(fromEmail);
+            helper.setTo(toEmail);
+            helper.setSubject("Congratulations on Your Achievement!");
+
+            String emailContent = generateAccomplishmentHtml(userName);
+
+            helper.setText(emailContent, true);
+
+            javaMailSender.send(mimeMessage);
+
+            log.info("Accomplishment Email sent to user: {}", toEmail);
+
+        } catch (Exception e) {
+            log.error("Failed to send accomplishment email to: {}", toEmail, e);
+        }
+    }
+
+    private String generateAccomplishmentHtml(String userName) {
+        return """
+            <div style="font-family: 'Arial', sans-serif; max-width: 650px; margin: auto; padding: 0; background-color: #f3f4f6;">
+                <div style="background: linear-gradient(135deg, #2563eb 0%%, #1d4ed8 100%%); padding: 40px 25px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        &#127881; Congratulations %s! &#127881;
+                    </h1>
+                </div>
+                <div style="background-color: #ffffff; padding: 30px 25px; border-left: 4px solid #16a34a; border-right: 4px solid #16a34a;">
+                    <div style="background-color: #dcfce7; border-left: 4px solid #16a34a; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                        <p style="color: #166534; font-size: 16px; line-height: 1.8; margin: 0; font-weight: 500;">
+                            Congrats for exploring the entire site! At the time of development, I wasn't sure if anyone would reach this stage, but if you're reading this, I am more happy than you.
+                        </p>
+                    </div>
+                    <div style="color: #374151; font-size: 15px; line-height: 1.8; margin-bottom: 20px;">
+                        <p style="margin: 0 0 15px 0;">
+                            I wanted to make this moment special and memorable, so I thought, why not send an accomplishment mail once anyone reaches and completes the last activity—even if it costs me to send a mail.
+                        </p>
+                        <p style="margin: 0; font-weight: bold; color: #1d4ed8; font-size: 17px;">
+                            Mark my words: <span style="color: #16a34a;">You are awesome! &#11088;</span>
+                        </p>
+                    </div>
+                    <div style="background: linear-gradient(to right, #dbeafe, #dcfce7); padding: 20px; border-radius: 8px; text-align: center; margin-top: 25px;">
+                        <p style="color: #1e40af; font-size: 16px; margin: 0; font-weight: 600;">
+                            Thank you for exploring Auth-System! &#128153;
+                        </p>
+                    </div>
+                    <div style="margin-top: 30px; padding-top: 25px; border-top: 2px dashed #e5e7eb;">
+                        <p style="color: #374151; font-size: 15px; margin: 0 0 20px 0; text-align: center; font-weight: 600;">
+                            Want to know more about the tech behind this project?
+                        </p>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/faiz-arfi/"
+                               style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 12px 24px;
+                                      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;
+                                      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);">
+                                &#128279; Read LinkedIn Post
+                            </a>
+                            <a href="faizarfi.dev/projects/auth-s"
+                               style="display: inline-block; background-color: #16a34a; color: #ffffff; padding: 12px 24px;
+                                      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;
+                                      box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3);">
+                                &#128194; View Project Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div style="background-color: #f9fafb; padding: 20px 25px; text-align: center; border-radius: 0 0 12px 12px; border-top: 1px solid #e5e7eb;">
+                    <p style="margin: 0; font-size: 13px; color: #6b7280;">
+                        &copy; %d Auth-System. All rights reserved.
+                    </p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #9ca3af;">
+                        Crafted with &#10084;&#65039; for awesome people like you
+                    </p>
+                </div>
+            </div>
+            """.formatted(userName, java.time.Year.now().getValue());
+    }
 }

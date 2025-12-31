@@ -26,12 +26,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PromoCodeDetailsRepo promoCodeDetailsRepo;
     private final ActivityLogRepo activityLogRepo;
+    private final EmailService emailService;
 
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, PromoCodeDetailsRepo promoCodeDetailsRepo, ActivityLogRepo activityLogRepo) {
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, PromoCodeDetailsRepo promoCodeDetailsRepo, ActivityLogRepo activityLogRepo, EmailService emailService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.promoCodeDetailsRepo = promoCodeDetailsRepo;
         this.activityLogRepo = activityLogRepo;
+        this.emailService = emailService;
     }
 
     public User getUserByEmail(String email) {
@@ -325,4 +327,21 @@ public class UserService {
         return ResponseEntity.ok().build();
     }
 
+    @Transactional
+    public ResponseEntity<String> completeActivity5(String email) {
+        User user = getUserByEmail(email);
+        if(!user.isActivity4Status()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please complete activity 4 first");
+        }
+        if(user.isActivity5Status()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have already completed activity 5");
+        }
+
+        user.setActivity5Status(true);
+        user.setPoints(user.getPoints() + 500);
+        userRepo.save(user);
+        //send accomplishment email
+        emailService.sendAccomplishmentEmail(user.getEmail(), user.getUserName());
+        return ResponseEntity.ok().body("Congratulations! You have completed all activities. An accomplishment email has been sent to your registered email address.");
+    }
 }
