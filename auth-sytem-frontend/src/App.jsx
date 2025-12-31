@@ -15,6 +15,8 @@ import ProfileSetting from './pages/features/ProfileSetting'
 import ResetPassword from './pages/ResetPassword'
 import UpdatePassword from './pages/UpdatePassword'
 import AwsomeActivity from './pages/AwsomeActivity'
+import About from './pages/About'
+import Contact from './pages/Contact'
 
 function App() {
 
@@ -54,6 +56,20 @@ function App() {
       element: <>
         <Navbar />
         <AuthPage />
+      </>
+    },
+    {
+      path: "/about",
+      element: <>
+        <Navbar />
+        <About />
+      </>
+    },
+    {
+      path: "/contact",
+      element: <>
+        <Navbar />
+        <Contact />
       </>
     },
     {
