@@ -37,15 +37,15 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    public User getUserByEmail(String email) {
+    public AppUser getUserByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     @Transactional
-    public User processOAuthPostLogin(String email, String name, String pictureUrl) {
-        Optional<User> existingUser = userRepo.findByEmail(email);
+    public AppUser processOAuthPostLogin(String email, String name, String pictureUrl) {
+        Optional<AppUser> existingUser = userRepo.findByEmail(email);
         if (existingUser.isPresent()) {
-            User user = existingUser.get();
+            AppUser user = existingUser.get();
             user.setProfilePicture(pictureUrl);
             user.getAuthInfo().setPreviousLogin(user.getAuthInfo().getCurrentLogin());
             user.getAuthInfo().setCurrentLogin(new Timestamp(System.currentTimeMillis()));
@@ -54,7 +54,7 @@ public class UserService {
             //Log the activity
             return getUser(user);
         }
-        User newUser = User.builder()
+        AppUser newUser = AppUser.builder()
                 .email(email)
                 .userName(name)
                 .profilePicture(pictureUrl)
@@ -84,7 +84,7 @@ public class UserService {
         return getUser(newUser);
     }
 
-    private User getUser(User user) {
+    private AppUser getUser(AppUser user) {
         ActivityLog activityLog = ActivityLog.builder()
                 .recordedAt(new Timestamp(System.currentTimeMillis()))
                 .type(ActivityLog.ActivityType.LOGIN)
@@ -108,7 +108,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> changePassword(String email, String newPassword, String oldPassword) {
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         if(!passwordEncoder.matches(oldPassword, user.getPassword())) {
             return ResponseEntity.badRequest().body("Incorrect old password");
         }
@@ -143,7 +143,7 @@ public class UserService {
         if(userDTO.getUserName().isBlank()) {
             return ResponseEntity.badRequest().body("Invalid username");
         }
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         if(user.getUserName().equals(userDTO.getUserName())) {
             return ResponseEntity.badRequest().body("Username cannot be same as old username");
         }
@@ -169,9 +169,9 @@ public class UserService {
     }
 
     public ResponseEntity<?> resetAccount(String email) {
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         // clear all the feilds except username and password
-        User newUser = User.builder()
+        AppUser newUser = AppUser.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .userName(user.getUserName())
@@ -196,7 +196,7 @@ public class UserService {
     }
 
     public ResponseEntity<?> deleteAccount(String email) {
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         userRepo.delete(user);
         return ResponseEntity.ok().build();
     }
@@ -238,7 +238,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> changePlan(String email, String promoCode, String role) {
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         if(user.getRole() == Role.valueOf(role.toUpperCase())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are already on this plan");
         }
@@ -308,7 +308,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is required");
         }
 
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         if((user.getRole() == Role.PRO || user.getRole() == Role.LEGEND) && !user.isActivity3Status()) {
             user.setActivity3Status(true);
             user.setPoints(user.getPoints() + 400);
@@ -327,7 +327,7 @@ public class UserService {
     }
 
     public ResponseEntity<String> skipActivity2(String email) {
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         if(user.getAuthInfo().getProvider().equals(AuthInfo.Provider.LOCAL)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Only OAuth users can skip activity 2");
         }
@@ -346,7 +346,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<String> completeActivity5(String email) {
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
         if(!user.isActivity4Status()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please complete activity 4 first");
         }
@@ -372,7 +372,7 @@ public class UserService {
             return ResponseEntity.badRequest().body("feedback is too long");
         }
 
-        User user = getUserByEmail(email);
+        AppUser user = getUserByEmail(email);
 
         if(user.getPoints() < 250) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You need at-least 250 points to submit feedback. You have " + user.getPoints() + " points.");

@@ -36,7 +36,7 @@ public class AuthInfo {
     @JsonBackReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private User user;
+    private AppUser user;
 
     public enum Provider {
         LOCAL, GOOGLE, FACEBOOK, GITHUB, LINKEDIN

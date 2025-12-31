@@ -23,7 +23,7 @@ public class ActivityLog {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
-    private User user;
+    private AppUser user;
 
     @Enumerated(EnumType.STRING)
     private ActivitySeverity severity;
@@ -43,7 +43,7 @@ public class ActivityLog {
         LOGIN, LOGOUT, PASSWORD_CHANGE, PROFILE_UPDATE, ACTIVITY_COMPLETION, ROLE_CHANGE;
     }
 
-    public static ActivityLog createActivityCompletionLog(User user, Integer activityNumber) {
+    public static ActivityLog createActivityCompletionLog(AppUser user, Integer activityNumber) {
         return ActivityLog.builder()
                 .user(user)
                 .severity(ActivitySeverity.INFO)

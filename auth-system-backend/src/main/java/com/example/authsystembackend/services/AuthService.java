@@ -7,7 +7,7 @@ import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.entity.ActivityLog;
 import com.example.authsystembackend.entity.AuthInfo;
 import com.example.authsystembackend.entity.Role;
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.AppUser;
 import com.example.authsystembackend.jwt.JwtService;
 import com.example.authsystembackend.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class AuthService {
     }
 
     public UserDTO signup(RegisterRequestDTO registerRequestDTO) {
-        User user = userRepo.findByEmail(registerRequestDTO.getEmail()).orElse(null);
+        AppUser user = userRepo.findByEmail(registerRequestDTO.getEmail()).orElse(null);
         if (user != null) {
             if (user.isEmailVerified()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already registered");
@@ -75,7 +76,7 @@ public class AuthService {
         }
 
         if (user == null) {
-            user = new User();
+            user = new AppUser();
             user.setEmail(registerRequestDTO.getEmail());
         }
         AuthInfo authInfo = new AuthInfo();
@@ -110,7 +111,7 @@ public class AuthService {
                         .build();
         user.getActivityLogs().add(activityLog);
 
-        User savedUser = userRepo.save(user);
+        AppUser savedUser = userRepo.save(user);
         savedUser.setVerificationCode(jwtService.generateToken(savedUser, Long.parseLong(verificationCodeValidityTime)));
         emailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getVerificationCode());
         return new UserDTO().toDTO(userRepo.save(savedUser));
@@ -122,7 +123,7 @@ public class AuthService {
         }
 
         try {
-            User user = userRepo.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password"));
+            AppUser user = userRepo.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password"));
 
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
@@ -184,7 +185,7 @@ public class AuthService {
     }
 
     public String forgetPassword(String email) {
-        User user = userRepo.findByEmail(email).orElse(null);
+        AppUser user = userRepo.findByEmail(email).orElse(null);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -196,7 +197,7 @@ public class AuthService {
 
     public String updatePassword(String token, String newPassword) {
         String email = jwtService.extractEmail(token);
-        User user = userRepo.findByEmail(email).orElse(null);
+        AppUser user = userRepo.findByEmail(email).orElse(null);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -217,5 +218,10 @@ public class AuthService {
         user.getActivityLogs().add(resetActivity);
         userRepo.save(user);
         return "Password updated successfully.";
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> checkServers() {
+        return ResponseEntity.ok().body("Server is up and running");
     }
 }

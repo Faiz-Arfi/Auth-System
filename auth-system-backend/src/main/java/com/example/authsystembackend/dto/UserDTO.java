@@ -2,7 +2,7 @@ package com.example.authsystembackend.dto;
 
 import com.example.authsystembackend.entity.AuthInfo;
 import com.example.authsystembackend.entity.Role;
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.AppUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +26,8 @@ public class UserDTO {
     private AuthInfo authInfo;
     private String role;
 
-    public User toEntity(UserDTO userDTO) {
-        return User.builder()
+    public AppUser toEntity(UserDTO userDTO) {
+        return AppUser.builder()
                 .id(userDTO.getId())
                 .userName(userDTO.getUserName())
                 .email(userDTO.getEmail())
@@ -43,7 +43,7 @@ public class UserDTO {
                 .build();
     }
 
-    public UserDTO toDTO(User user) {
+    public UserDTO toDTO(AppUser user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .email(user.getEmail())

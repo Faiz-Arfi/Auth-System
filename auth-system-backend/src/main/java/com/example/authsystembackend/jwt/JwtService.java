@@ -1,6 +1,6 @@
 package com.example.authsystembackend.jwt;
 
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -42,12 +42,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(User user, long expiration) {
+    public String generateToken(AppUser user, long expiration) {
 
         return generateToken(new HashMap<>(), user, expiration);
     }
 
-    public String generateToken(Map<String, Object> claims, User user, long expiration) {
+    public String generateToken(Map<String, Object> claims, AppUser user, long expiration) {
         claims.put("userId", user.getId());
 
         return Jwts.builder()
@@ -64,7 +64,7 @@ public class JwtService {
         return extractClaims(jwtToken, Claims::getSubject);
     }
 
-    public boolean isTokenValid(String jwtToken, User user) {
+    public boolean isTokenValid(String jwtToken, AppUser user) {
         final Long userId = extractUserId(jwtToken);
         return (userId != null && userId.equals((user.getId()))) && !isTokenExpired(jwtToken);
     }

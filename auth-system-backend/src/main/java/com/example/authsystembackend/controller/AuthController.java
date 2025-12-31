@@ -4,7 +4,7 @@ import com.example.authsystembackend.dto.LoginRequestDTO;
 import com.example.authsystembackend.dto.LoginResponseDTO;
 import com.example.authsystembackend.dto.RegisterRequestDTO;
 import com.example.authsystembackend.dto.UserDTO;
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.AppUser;
 import com.example.authsystembackend.services.AuthService;
 import com.example.authsystembackend.services.UserService;
 import org.springframework.http.HttpHeaders;
@@ -62,7 +62,7 @@ public class AuthController {
         }
 
         String email = authentication.getName();
-        User user = userService.getUserByEmail(email);
+        AppUser user = userService.getUserByEmail(email);
         return ResponseEntity.ok(new UserDTO().toDTO(user));
     }
 

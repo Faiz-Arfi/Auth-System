@@ -1,6 +1,6 @@
 package com.example.authsystembackend.configuration;
 
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.AppUser;
 import com.example.authsystembackend.jwt.JwtAuthenticationFilter;
 import com.example.authsystembackend.jwt.JwtService;
 import com.example.authsystembackend.services.UserDetailsServiceImpl;
@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                             String name = oAuth2User.getAttribute("name");
                             String pictureUrl = oAuth2User.getAttribute("picture");
                             // Map user to the db
-                            User user = userService.processOAuthPostLogin(email, name, pictureUrl);
+                            AppUser user = userService.processOAuthPostLogin(email, name, pictureUrl);
 
                             // Generate JWT and return cookie
                             String jwt = jwtService.generateToken(user, Integer.parseInt(accessTokenValidityTime));

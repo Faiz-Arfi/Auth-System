@@ -1,6 +1,6 @@
 package com.example.authsystembackend.controller;
 
-import com.example.authsystembackend.entity.User;
+import com.example.authsystembackend.entity.AppUser;
 import com.example.authsystembackend.jwt.JwtService;
 import com.example.authsystembackend.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ public class VerificationController {
     @GetMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
         String email = jwtService.extractEmail(token);
-        User user = userRepo.findByEmail(email).orElse(null);
+        AppUser user = userRepo.findByEmail(email).orElse(null);
 
         if(user == null || user.getVerificationCode() == null || !user.getVerificationCode().equals(token)) {
             return ResponseEntity.status(HttpStatus.FOUND)
@@ -48,7 +48,7 @@ public class VerificationController {
     @GetMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestParam("token") String token) {
         String email = jwtService.extractEmail(token);
-        User user = userRepo.findByEmail(email).orElse(null);
+        AppUser user = userRepo.findByEmail(email).orElse(null);
 
         if(user == null || user.getResetPasswordCode() == null || !user.getResetPasswordCode().equals(token)) {
             return ResponseEntity.status(HttpStatus.FOUND)
