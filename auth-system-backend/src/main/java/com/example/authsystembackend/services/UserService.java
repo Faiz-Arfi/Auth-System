@@ -112,6 +112,9 @@ public class UserService {
         if(!passwordEncoder.matches(oldPassword, user.getPassword())) {
             return ResponseEntity.badRequest().body("Incorrect old password");
         }
+        if(passwordEncoder.matches(newPassword, user.getPassword())) {
+            return ResponseEntity.badRequest().body("New password cannot be same as old password");
+        }
         user.setPassword(passwordEncoder.encode(newPassword));
 
         //Log the activity
@@ -139,6 +142,9 @@ public class UserService {
             return ResponseEntity.badRequest().body("Invalid username");
         }
         User user = getUserByEmail(email);
+        if(user.getUserName().equals(userDTO.getUserName())) {
+            return ResponseEntity.badRequest().body("Username cannot be same as old username");
+        }
         // LOG The activity
         ActivityLog activityLog = ActivityLog.builder()
                 .user(user)
