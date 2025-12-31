@@ -1,5 +1,6 @@
 package com.example.authsystembackend.services;
 
+import com.example.authsystembackend.dto.FeedbackRequestDTO;
 import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.entity.*;
 import com.example.authsystembackend.repository.ActivityLogRepo;
@@ -343,5 +344,31 @@ public class UserService {
         //send accomplishment email
         emailService.sendAccomplishmentEmail(user.getEmail(), user.getUserName());
         return ResponseEntity.ok().body("Congratulations! You have completed all activities. An accomplishment email has been sent to your registered email address.");
+    }
+
+    public ResponseEntity<String> saveFeedback(String email, FeedbackRequestDTO feedbackReq) {
+        if(!feedbackReq.isValidInput()) {
+            return ResponseEntity.badRequest().body("feedback is either blank or contains invalid characters or rating");
+        }
+        if(!feedbackReq.isValidLength()) {
+            return ResponseEntity.badRequest().body("feedback is too long");
+        }
+
+        User user = getUserByEmail(email);
+
+        if(user.getPoints() < 250) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You need at-least 250 points to submit feedback. You have " + user.getPoints() + " points.");
+        }
+        UserFeedback feedback = UserFeedback.builder()
+                .feedback(feedbackReq.getFeedback())
+                .rating(feedbackReq.getRating())
+                .user(user)
+                .build();
+
+        user.getUserFeedbacks().add(feedback);
+        user.setPoints(user.getPoints() - 250);
+        userRepo.save(user);
+
+        return ResponseEntity.ok().body("Thank you for your valuable feedback!");
     }
 }

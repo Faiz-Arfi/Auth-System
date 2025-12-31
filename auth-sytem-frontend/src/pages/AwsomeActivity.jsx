@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Trophy, RotateCcw, MessageSquare, Linkedin, Youtube, Star, Sparkles } from 'lucide-react'
+import { Trophy, RotateCcw, MessageSquare, Linkedin, Youtube, Star, Sparkles, CheckCheck } from 'lucide-react'
 import Unauthorized from '../components/extras/Unauthorized';
 import CoinGained from '../components/extras/CoinGained';
-import { completeActivity5 } from '../api/profile';
+import { completeActivity5, submitActivityFeedback } from '../api/profile';
 import SucessModal from '../components/extras/SucessModal';
 import ErrorModal from '../components/extras/ErrorModal';
 
@@ -18,21 +18,38 @@ const AwsomeActivity = () => {
     const [errorMessage, setErrorMessage] = useState('')
     const [showSuccessModal, setShowSuccessModal] = useState(false)
     const [successMessage, setSuccessMessage] = useState('')
+    const [points, setPoints] = useState(localStorage.getItem('points') || '0');
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    const handleFeedbackSubmit = (e) => {
+    const handleFeedbackSubmit = async (e) => {
         e.preventDefault();
-        // To do API call
-        console.log('Feedback submitted:', { rating, feedback });
-        setFeedbackSubmitted(true);
-        setTimeout(() => {
-            setFeedback('');
-            setRating(0);
-            setFeedbackSubmitted(false);
-        }, 3000);
+        try {
+            const points = parseInt(localStorage.getItem('points') || '0');
+            if (points < 250) {
+                setErrorMessage('Insufficient points to submit feedback.');
+                setShowErrorModal(true);
+                return;
+            }
+            const response = await submitActivityFeedback({ feedback, rating });
+            const updatedPoints = points - 250;
+            localStorage.setItem('points', updatedPoints);
+            setPoints(updatedPoints);
+            setSuccessMessage(response || 'Feedback submitted successfully!');
+            setShowSuccessModal(true);
+            setFeedbackSubmitted(true);
+            setTimeout(() => {
+                setFeedback('');
+                setRating(0);
+                setFeedbackSubmitted(false);
+            }, 7000);
+        } catch (error) {
+            setErrorMessage(error.response.data||'Error processing points. Please try again later.');
+            setShowErrorModal(true);
+            return;
+        }
     };
 
     const handleCoinModalClose = async (e) => {
@@ -61,7 +78,7 @@ const AwsomeActivity = () => {
             </div>
 
             <div className="max-w-4xl mx-auto">
-                
+
                 <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-8 text-center border-2 border-green-600 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-green-600"></div>
 
@@ -124,12 +141,20 @@ const AwsomeActivity = () => {
                     {feedbackSubmitted ? (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
                             <p className="text-green-700 font-semibold text-lg">
-                                ✅ Thank you for your feedback! We appreciate your input.
+                                Thank you for your feedback! We appreciate your input.
+                            </p>
+                            <p className="text-gray-600 text-sm mt-2">
+                                250 points have been deducted from your account.
                             </p>
                         </div>
                     ) : (
                         <form onSubmit={handleFeedbackSubmit}>
-                            
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                                <p className="text-yellow-800 text-sm font-semibold">
+                                    Note: Submitting feedback will deduct <span className="font-bold">250 points</span> from your account, but don't worry, 500 coins have already been added for completing all activities! So give it a try to share your thoughts.
+                                </p>
+                            </div>
+
                             <div className="mb-6">
                                 <label className="block text-gray-700 font-semibold mb-3">
                                     How would you rate your experience?
@@ -164,23 +189,33 @@ const AwsomeActivity = () => {
                                     onChange={(e) => setFeedback(e.target.value)}
                                     placeholder="Tell us about your experience, suggestions, or any improvements you'd like to see..."
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                                    maxLength={500}
                                     required
                                 />
+                                <div className="text-right text-sm text-gray-500 mt-1">
+                                    {feedback.length}/500 characters
+                                </div>
                             </div>
 
-                            <button
-                                type="submit"
-                                disabled={rating === 0}
-                                className={`
-                  w-full md:w-auto px-8 py-3 rounded-lg font-semibold transition-all duration-300
-                  ${rating === 0
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md'
-                                    }
-                `}
-                            >
-                                Submit Feedback
-                            </button>
+                            <div className="flex flex-col sm:flex-row items-center gap-4">
+                                <button
+                                    type="submit"
+                                    disabled={rating === 0}
+                                    className={`
+                      w-full sm:w-auto px-8 py-3 rounded-lg font-semibold transition-all duration-300
+                      ${rating === 0
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md'
+                                        }
+                    `}
+                                >
+                                    Submit Feedback (250 points)
+                                </button>
+                                <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-2 shadow-sm">
+                                    <span className="text-gray-700 text-sm font-medium">Available Points: </span>
+                                    <span className="font-bold text-green-600 text-lg">{points}</span>
+                                </div>
+                            </div>
                         </form>
                     )}
                 </div>
@@ -194,7 +229,7 @@ const AwsomeActivity = () => {
                     </p>
 
                     <div className="grid md:grid-cols-2 gap-4">
-                        
+
                         <a
                             href="https://www.linkedin.com"
                             target="_blank"

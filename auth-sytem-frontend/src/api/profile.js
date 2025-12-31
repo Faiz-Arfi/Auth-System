@@ -96,7 +96,7 @@ export const getActivityLogsOfDate = async (date) => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-    
+
     console.log('Fetching activity logs for date:', formattedDate);
     try {
         const response = await axiosInstance.get(
@@ -119,3 +119,15 @@ export const completeActivity5 = async () => {
         throw error;
     }
 }
+
+export const submitActivityFeedback = async (feedbackData) => {
+    try {
+        const response = await axiosInstance.post(
+            `${baseUrl}/submit-feedback`,
+            feedbackData
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+} 

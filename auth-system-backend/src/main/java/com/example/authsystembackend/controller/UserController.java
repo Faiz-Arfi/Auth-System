@@ -1,5 +1,6 @@
 package com.example.authsystembackend.controller;
 
+import com.example.authsystembackend.dto.FeedbackRequestDTO;
 import com.example.authsystembackend.dto.PasswordChangeDTO;
 import com.example.authsystembackend.dto.UserDTO;
 import com.example.authsystembackend.entity.ActivityLog;
@@ -107,5 +108,15 @@ public class UserController {
         }
         String email = authentication.getName();
         return userService.completeActivity5(email);
+    }
+
+    @PreAuthorize("hasRole('LEGEND')")
+    @PostMapping("/submit-feedback")
+    public ResponseEntity<String> submitFeedback(Authentication authentication, @RequestBody FeedbackRequestDTO feedbackReq) {
+        if(authentication == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Session expired. Please login again");
+        }
+        String email = authentication.getName();
+        return userService.saveFeedback(email, feedbackReq);
     }
 }
