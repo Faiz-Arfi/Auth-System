@@ -1,4 +1,4 @@
-import { Bell, Info, ShieldAlert, Clock } from 'lucide-react'
+import { Bell, Info, ShieldAlert, Clock, CheckCircle } from 'lucide-react'
 import React from 'react'
 
 const ActivityLogItem = (
@@ -30,6 +30,13 @@ const ActivityLogItem = (
                     iconColor: 'text-white',
                     badge: 'bg-red-100 text-red-700 border-red-200',
                     icon: <ShieldAlert className='h-6 w-6' />
+                }
+            case 'Activity Completion':
+                return {
+                    iconBg: 'bg-green-600',
+                    iconColor: 'text-white',
+                    badge: 'bg-green-100 text-green-700 border-green-200',
+                    icon: <CheckCircle className='h-6 w-6' />
                 }
             default:
                 return {

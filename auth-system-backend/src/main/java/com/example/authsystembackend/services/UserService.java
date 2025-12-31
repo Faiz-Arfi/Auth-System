@@ -48,7 +48,7 @@ public class UserService {
             User user = existingUser.get();
             user.setProfilePicture(pictureUrl);
             user.getAuthInfo().setPreviousLogin(user.getAuthInfo().getCurrentLogin());
-            user.getAuthInfo().setCurrentLogin(new java.sql.Timestamp(System.currentTimeMillis()));
+            user.getAuthInfo().setCurrentLogin(new Timestamp(System.currentTimeMillis()));
             user.getAuthInfo().setNoOfLogins(user.getAuthInfo().getNoOfLogins() + 1);
 
             //Log the activity
@@ -70,10 +70,10 @@ public class UserService {
                 .build();
 
         AuthInfo authInfo = AuthInfo.builder()
-                .previousLogin(new java.sql.Timestamp(System.currentTimeMillis()))
-                .currentLogin(new java.sql.Timestamp(System.currentTimeMillis()))
+                .previousLogin(new Timestamp(System.currentTimeMillis()))
+                .currentLogin(new Timestamp(System.currentTimeMillis()))
                 .noOfLogins(1)
-                .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                .createdAt(new Timestamp(System.currentTimeMillis()))
                 .noOfPasswordChanges(0)
                 .noOfProfileUpdates(0)
                 .provider(AuthInfo.Provider.GOOGLE)
@@ -86,13 +86,13 @@ public class UserService {
 
     private User getUser(User user) {
         ActivityLog activityLog = ActivityLog.builder()
-                .recordedAt(new java.sql.Timestamp(System.currentTimeMillis()))
+                .recordedAt(new Timestamp(System.currentTimeMillis()))
                 .type(ActivityLog.ActivityType.LOGIN)
                 .severity(ActivityLog.ActivitySeverity.MODERATE)
                 .description("Log-in Using Google OAuth")
                 .user(user)
                 .build();
-        if(user.getActivityLogs() == null) user.setActivityLogs(new java.util.ArrayList<>());
+        if(user.getActivityLogs() == null) user.setActivityLogs(new ArrayList<>());
         user.getActivityLogs().add(activityLog);
 
         return userRepo.save(user);
@@ -130,6 +130,8 @@ public class UserService {
         if(user.getAuthInfo().getNoOfPasswordChanges() == 1) {
             user.setActivity2Status(true);
             user.setPoints(user.getPoints() + 150);
+            ActivityLog activityLog1 = ActivityLog.createActivityCompletionLog(user, 2);
+            user.getActivityLogs().add(activityLog1);
         }
         userRepo.save(user);
         return ResponseEntity.ok().body(user.getAuthInfo().getNoOfPasswordChanges());
@@ -159,6 +161,8 @@ public class UserService {
         if(user.getAuthInfo().getNoOfProfileUpdates() == 1) {
             user.setActivity4Status(true);
             user.setPoints(user.getPoints() + 100);
+            ActivityLog activityLog1 = ActivityLog.createActivityCompletionLog(user, 4);
+            user.getActivityLogs().add(activityLog1);
         }
         userRepo.save(user);
         return ResponseEntity.ok().body(user.getAuthInfo().getNoOfProfileUpdates());
@@ -273,6 +277,8 @@ public class UserService {
         if(user.getRole() == Role.INTERMEDIATE && !user.isActivity1Status()) {
             user.setActivity1Status(true);
             user.setPoints(user.getPoints() + 50);
+            ActivityLog activityLog1 = ActivityLog.createActivityCompletionLog(user, 1);
+            user.getActivityLogs().add(activityLog1);
         }
         userRepo.save(user);
         return ResponseEntity.ok().body(user.getPoints());
@@ -306,6 +312,8 @@ public class UserService {
         if((user.getRole() == Role.PRO || user.getRole() == Role.LEGEND) && !user.isActivity3Status()) {
             user.setActivity3Status(true);
             user.setPoints(user.getPoints() + 400);
+            ActivityLog activityLog1 = ActivityLog.createActivityCompletionLog(user, 3);
+            user.getActivityLogs().add(activityLog1);
             userRepo.save(user);
         }
 
@@ -330,6 +338,8 @@ public class UserService {
 
         user.setActivity2Status(true);
         user.setPoints(user.getPoints() + 150);
+        ActivityLog activityLog1 = ActivityLog.createActivityCompletionLog(user, 2);
+        user.getActivityLogs().add(activityLog1);
         userRepo.save(user);
         return ResponseEntity.ok().build();
     }
@@ -346,6 +356,8 @@ public class UserService {
 
         user.setActivity5Status(true);
         user.setPoints(user.getPoints() + 500);
+        ActivityLog activityLog1 = ActivityLog.createActivityCompletionLog(user, 5);
+        user.getActivityLogs().add(activityLog1);
         userRepo.save(user);
         //send accomplishment email
         emailService.sendAccomplishmentEmail(user.getEmail(), user.getUserName());

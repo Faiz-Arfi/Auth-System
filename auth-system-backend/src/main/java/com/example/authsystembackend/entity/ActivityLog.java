@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -35,11 +36,21 @@ public class ActivityLog {
     private Date recordedAt;
 
     public enum ActivitySeverity {
-        MODERATE, ATTENTION_REQUIRED, BASIC;
+        MODERATE, INFO, ATTENTION_REQUIRED, BASIC;
     }
 
     public enum ActivityType {
         LOGIN, LOGOUT, PASSWORD_CHANGE, PROFILE_UPDATE, ACTIVITY_COMPLETION, ROLE_CHANGE;
+    }
+
+    public static ActivityLog createActivityCompletionLog(User user, Integer activityNumber) {
+        return ActivityLog.builder()
+                .user(user)
+                .severity(ActivitySeverity.INFO)
+                .type(ActivityType.ACTIVITY_COMPLETION)
+                .description("Completed Activity " + activityNumber)
+                .recordedAt(new Timestamp(System.currentTimeMillis()))
+                .build();
     }
 
 }

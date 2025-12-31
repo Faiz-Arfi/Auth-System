@@ -81,7 +81,8 @@ const ActivityLog = () => {
     const severityMap = {
       'BASIC': 'Basic',
       'MODERATE': 'Moderate',
-      'ATTENTION_REQUIRED': 'Attention Required'
+      'ATTENTION_REQUIRED': 'Attention Required',
+      'INFO': 'Activity Completion'
     };
     return severityMap[severity] || 'Basic';
   }
