@@ -39,10 +39,8 @@ const ChangePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    console.log('Password change submitted:', formData)
     try {
       const response = await editPassword(formData);
-      console.log('Password changed successfully:', response);
       setFormData({
         oldPassword: '',
         newPassword: '',
@@ -59,7 +57,6 @@ const ChangePassword = () => {
       // check error status code
       setErrorMessage(error.response.data || 'Failed to change password. Please try again later.');
       setShowErrorModal(true);
-      console.error('Error changing password:', error);
     } finally {
       setLoading(false);
     }
@@ -69,7 +66,6 @@ const ChangePassword = () => {
     e.preventDefault();
     try {
       const response = await skipActivity2ForUser();
-      console.log('Activity 2 skipped successfully:', response);
       setShowCoinModal(true);
       localStorage.setItem("activity2Status", true);
       setShowActivity2Note(false);
@@ -77,7 +73,6 @@ const ChangePassword = () => {
     } catch (error) {
       setErrorMessage(error.response.data || 'Failed to skip Activity 2. Please try again later.');
       setShowErrorModal(true);
-      console.error('Error skipping activity 2:', error);
     }
   }
 
