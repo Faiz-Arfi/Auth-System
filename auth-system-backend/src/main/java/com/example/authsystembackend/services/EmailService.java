@@ -71,30 +71,54 @@ public class EmailService {
 
     private String generateAccountCreationHtml(String body, String actionUrl) {
         return """
-                <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto; padding: 25px;
-                                        border: 1px solid #dcdcdc; border-radius: 8px; background-color: #ffffff;">
-                                <div style="text-align: center; padding-bottom: 15px; border-bottom: 2px solid #004080;">
-                                    <h2 style="color: #004080; margin: 0;">Action Required</h2>
-                                </div>
-                                <div style="padding: 20px 0; color: #333333; font-size: 15px; line-height: 1.6;">
-                                    %s
-                                </div>
-                                <div style="text-align: center; margin-top: 30px;">
-                                    <a href="%s"
-                                       style="background-color: #004080; color: #ffffff; padding: 12px 25px;
-                                              text-decoration: none; border-radius: 5px; font-size: 16px;">
-                                        Verify Email
-                                    </a>
-                                </div>
-                                <div style="margin-top: 20px; padding: 15px; background-color: #f5f8fc;
-                                            border-left: 4px solid #004080; border-radius: 4px; font-size: 14px; color: #333;">
-                                    <p style="margin: 0;">If you did not request this, please ignore this email.</p>
-                                </div>
-                                <div style="text-align: center; margin-top: 25px; font-size: 13px; color: #777;">
-                                    <p style="margin: 0;">&copy; %d Auth-System. All rights reserved.</p>
-                                </div>
-                            </div>
-                """.formatted(body, actionUrl, java.time.Year.now().getValue());
+            <div style="font-family: 'Arial', sans-serif; max-width: 650px; margin: auto; padding: 0; background-color: #f3f4f6;">
+                <div style="background: linear-gradient(135deg, #2563eb 0%%, #1d4ed8 100%%); padding: 40px 25px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        &#128274; Action Required
+                    </h1>
+                    <p style="color: #dbeafe; margin: 10px 0 0 0; font-size: 14px;">
+                        Please verify your email address
+                    </p>
+                </div>
+                <div style="background-color: #ffffff; padding: 30px 25px; border-left: 4px solid #2563eb; border-right: 4px solid #2563eb;">
+                    <div style="color: #374151; font-size: 15px; line-height: 1.8; margin-bottom: 25px;">
+                        %s
+                    </div>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="%s"
+                           style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%%, #1d4ed8 100%%);
+                                  color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px;
+                                  font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);">
+                            &#9989; Verify Email Address
+                        </a>
+                    </div>
+                    <div style="margin-top: 25px; padding: 18px; background: linear-gradient(to right, #dbeafe, #f3f4f6);
+                                border-left: 4px solid #3b82f6; border-radius: 8px; font-size: 14px; color: #1e40af;">
+                        <p style="margin: 0; font-weight: 500;">
+                            &#128712; <strong>Security Notice:</strong> If you did not request this verification, please ignore this email and your account will remain secure.
+                        </p>
+                    </div>
+                    <div style="margin-top: 25px; padding: 15px; background-color: #f9fafb; border-radius: 8px;
+                                border: 1px dashed #d1d5db; text-align: center;">
+                        <p style="margin: 0 0 8px 0; font-size: 13px; color: #6b7280; font-weight: 600;">
+                            Link not working?
+                        </p>
+                        <p style="margin: 0; font-size: 12px; color: #9ca3af; word-break: break-all;">
+                            Copy and paste this URL into your browser:<br/>
+                            <span style="color: #2563eb;">%s</span>
+                        </p>
+                    </div>
+                </div>
+                <div style="background-color: #f9fafb; padding: 20px 25px; text-align: center; border-radius: 0 0 12px 12px; border-top: 1px solid #e5e7eb;">
+                    <p style="margin: 0; font-size: 13px; color: #6b7280;">
+                        &copy; %d Auth-System. All rights reserved.
+                    </p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #9ca3af;">
+                        Secure authentication system built with care &#128155;
+                    </p>
+                </div>
+            </div>
+            """.formatted(body, actionUrl, actionUrl, java.time.Year.now().getValue());
     }
 
     public void sendAccomplishmentEmail(String toEmail, String userName) {
