@@ -12,6 +12,7 @@ const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -37,6 +38,7 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true)
     console.log('Password change submitted:', formData)
     try {
       const response = await editPassword(formData);
@@ -55,10 +57,11 @@ const ChangePassword = () => {
       }
     } catch (error) {
       // check error status code
-      if (error.response && error.response.status === 500) {
-        // window.location.reload();
-      }
+      setErrorMessage(error.response.data || 'Failed to change password. Please try again later.');
+      setShowErrorModal(true);
       console.error('Error changing password:', error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -210,14 +213,30 @@ const ChangePassword = () => {
             <div className="flex gap-4 pt-4">
               <button
                 type="submit"
-                className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-md hover:shadow-lg"
+                disabled={loading}
+                className={`flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${
+                  loading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               >
-                Update Password
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Updating...</span>
+                  </>
+                ) : (
+                  'Update Password'
+                )}
               </button>
               <button
                 type="button"
+                disabled={loading}
                 onClick={() => setFormData({ oldPassword: '', newPassword: '', confirmPassword: '' })}
-                className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                className={`px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors ${
+                  loading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 Reset
               </button>
