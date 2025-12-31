@@ -50,16 +50,16 @@ const Navbar = ( {isLoggedIn} ) => {
             <ul className="flex gap-4 items-center">
                 {isLoggedIn ?
                 <>
-                    <li className="bg-red-600 hover:bg-red-400 px-4 py-2 rounded-md"><button
+                    <li className="bg-red-600 hover:bg-red-400 rounded-md"><button
                         onClick={handleLogout} 
-                        className="text-amber-50"
+                        className="text-amber-50 px-4 py-2 w-full h-full"
                         >
                             Logout
                         </button>
                     </li>
                 </>
                 :
-                <li className="bg-gray-800 hover:bg-gray-600 px-4 py-2 rounded-md"><Link to="/login" className="text-amber-50">Let's Go</Link></li>
+                <li className="bg-gray-800 hover:bg-gray-600 rounded-md"><Link to="/login" className="text-amber-50 px-4 py-2 block">Let's Go</Link></li>
                 }
             </ul>
         </nav>

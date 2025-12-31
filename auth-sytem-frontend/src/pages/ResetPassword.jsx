@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import AuthMessage from '../components/AuthMessage'
 import { forgetPassword } from '../api/auth';
+import { Link } from 'react-router-dom';
 
 const ResetPassword = () => {
     const [email, setEmail] = useState('');
@@ -73,9 +74,9 @@ const ResetPassword = () => {
                 </button>
 
                 <div className='w-full text-center'>
-                    <a href="/auth" className='text-sm text-blue-600 hover:text-blue-800 hover:underline'>
+                    <Link to="/login" className='text-sm text-blue-600 hover:text-blue-800 hover:underline'>
                         Back to Login
-                    </a>
+                    </Link>
                 </div>
             </form>
         </div>
