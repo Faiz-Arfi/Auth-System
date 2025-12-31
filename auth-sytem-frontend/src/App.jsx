@@ -4,7 +4,7 @@ import Navbar from './components/Navbar'
 import AuthPage from './pages/AuthPage'
 import UserPage from './pages/UserPage'
 import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom'
-import ErrorPage from './pages/ErrorPage'
+import NotFoundErrorPage from './pages/NotFoundErrorPage'
 import { useEffect, useState } from 'react'
 import { getCurrentUser } from './api/auth'
 import ProtectedRoutes from './components/ProtectedRoutes'
@@ -46,32 +46,28 @@ function App() {
       element: <>
         <Navbar />
         <HomePage />
-      </>,
-      errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/login",
       element: <>
         <Navbar />
         <AuthPage />
-      </>,
-      errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/reset-password",
       element: <>
         <Navbar />
         <ResetPassword />
-      </>,
-      errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/update-password",
       element: <>
         <Navbar />
         <UpdatePassword />
-      </>,
-      errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/user/dashboard",
@@ -80,8 +76,7 @@ function App() {
           <Navbar isLoggedIn={true} />
           <UserPage />
         </ProtectedRoutes>
-      </>,
-      // errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/user/change-role",
@@ -90,8 +85,7 @@ function App() {
           <Navbar isLoggedIn={true} />
           <ChangeRole />
         </ProtectedRoutes>
-      </>,
-      // errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/user/change-password",
@@ -100,8 +94,7 @@ function App() {
           <Navbar isLoggedIn={true} />
           <ChangePassword />
         </ProtectedRoutes>
-      </>,
-      // errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/user/activity-log",
@@ -110,8 +103,7 @@ function App() {
           <Navbar isLoggedIn={true} />
           <ActivityLog />
         </ProtectedRoutes>
-      </>,
-      // errorElement: <ErrorPage />,
+      </>
     },
     {
       path: "/user/profile-setting",
@@ -122,6 +114,12 @@ function App() {
         </ProtectedRoutes>
       </>,
       // errorElement: <ErrorPage />,
+    },
+    {
+      path: "*",
+      element: <>
+        <NotFoundErrorPage />
+      </>
     },
   ]);
 
