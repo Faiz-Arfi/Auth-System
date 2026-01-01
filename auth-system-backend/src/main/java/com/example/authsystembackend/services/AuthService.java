@@ -10,6 +10,7 @@ import com.example.authsystembackend.entity.Role;
 import com.example.authsystembackend.entity.AppUser;
 import com.example.authsystembackend.jwt.JwtService;
 import com.example.authsystembackend.repository.UserRepo;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -129,10 +130,24 @@ public class AuthService {
             );
 
             if(!user.isEmailVerified()) {
+                //check if verification code is expired
+                String oldVerificationCode = user.getVerificationCode();
+                if(oldVerificationCode != null && !oldVerificationCode.isBlank()) {
+                    try {
+                        if(jwtService.isTokenValid(oldVerificationCode, user)) {
+                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email verification link has already been sent. Please check your spam folder if it is not there.");
+                        }
+                    } catch (ExpiredJwtException e) {
+                        user.setVerificationCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
+                        userRepo.save(user);
+                        emailService.sendVerificationEmail(user.getEmail(), user.getVerificationCode());
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email not verified. Please check your email for verification link.");
+                    }
+                }
                 user.setVerificationCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
                 userRepo.save(user);
                 emailService.sendVerificationEmail(user.getEmail(), user.getVerificationCode());
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Please verify your email");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email not verified. Please check your email for verification link.");
             }
 
             if (authentication.isAuthenticated()) {
@@ -187,6 +202,18 @@ public class AuthService {
         AppUser user = userRepo.findByEmail(email).orElse(null);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        if(user.getResetPasswordCode() != null && !user.getResetPasswordCode().isBlank()) {
+            try {
+                if(jwtService.isTokenValid(user.getResetPasswordCode(), user)) {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "A password reset link has already been sent to your email. Please check your spam folder if it is not there.");
+                }
+            } catch (ExpiredJwtException e) {
+                user.setResetPasswordCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
+                emailService.sendPasswordResetMail(user.getEmail(), user.getResetPasswordCode());
+                userRepo.save(user);
+                return "If that email exists in our system, you will receive a link.";
+            }
         }
         user.setResetPasswordCode(jwtService.generateToken(user, Long.parseLong(verificationCodeValidityTime)));
         emailService.sendPasswordResetMail(user.getEmail(), user.getResetPasswordCode());
