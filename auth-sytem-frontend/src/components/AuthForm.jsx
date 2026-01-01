@@ -87,7 +87,7 @@ const AuthForm = ({ mode = "register" }) => {
     }
 
     const handleGoogleAuth = () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+        window.location.href = import.meta.env.VITE_OAUTH_GOOGLE_URL || 'http://localhost:8080/oauth2/authorization/google';
     }
 
     return (<>

@@ -1,7 +1,7 @@
 import axiosInstance from './axiosConfig';
 import { logout } from './auth';
 
-const baseUrl = 'http://localhost:8080/user';
+const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/user`;
 
 export const editName = async (userName) => {
     try {

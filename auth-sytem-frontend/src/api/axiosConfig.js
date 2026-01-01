@@ -16,7 +16,7 @@ axiosInstance.interceptors.response.use(
             // Call backend to clear cookies
             try {
                 await axios.post(
-                    'http://localhost:8080/auth/clear-cookie',
+                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/auth/clear-cookie`,
                     {},
                     { withCredentials: true }
                 );

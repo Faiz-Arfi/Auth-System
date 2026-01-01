@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import axiosInstance from "./axiosConfig";
 
-const baseUrl = 'http://localhost:8080/auth';
+const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/auth`;
 
 export const login = async (email, password) => {
     try {
