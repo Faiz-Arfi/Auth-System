@@ -21,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -175,7 +174,7 @@ public class AuthService {
                 .secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("strict")
+                .sameSite("None")
                 .build();
 
 
@@ -220,8 +219,30 @@ public class AuthService {
         return "Password updated successfully.";
     }
 
-    @GetMapping("/health")
-    public ResponseEntity<String> checkServers() {
-        return ResponseEntity.ok().body("Server is up and running");
+    public ResponseEntity<String> setAuthCookie(String token) {
+        // Verify token is valid before setting cookie
+        try {
+            String email = jwtService.extractEmail(token);
+            AppUser user = userRepo.findByEmail(email).orElse(null);
+
+            if (!jwtService.isTokenValid(token, user)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+
+            ResponseCookie responseCookie = ResponseCookie.from("JWT", token)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .sameSite("None")
+                    .build();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                    .body("Cookie set successfully");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
     }
 }

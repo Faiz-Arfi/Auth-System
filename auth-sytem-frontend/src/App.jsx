@@ -17,6 +17,7 @@ import UpdatePassword from './pages/UpdatePassword'
 import AwsomeActivity from './pages/AwsomeActivity'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import OAuthCallback from './pages/OAuthCallback'
 
 function App() {
 
@@ -85,6 +86,10 @@ function App() {
         <Navbar />
         <UpdatePassword />
       </>
+    },
+    {
+      path: "/oauth-callback",
+      element: <OAuthCallback />
     },
     {
       path: "/user/dashboard",

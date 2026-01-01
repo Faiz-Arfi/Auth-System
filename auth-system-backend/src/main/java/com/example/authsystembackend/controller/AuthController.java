@@ -43,7 +43,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(24 * 60 * 60) //24hr
-                .sameSite("strict")
+                .sameSite("None")
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
@@ -78,5 +78,16 @@ public class AuthController {
 
         String message = authService.updatePassword(token, newPassword);
         return ResponseEntity.ok(message);
+    }
+
+    @PostMapping("/set-oauth-cookie")
+    public ResponseEntity<String> setOAuthCookie(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+
+        if (token == null || token.isBlank()) {
+            return ResponseEntity.badRequest().body("Token is required");
+        }
+
+        return authService.setAuthCookie(token);
     }
 }

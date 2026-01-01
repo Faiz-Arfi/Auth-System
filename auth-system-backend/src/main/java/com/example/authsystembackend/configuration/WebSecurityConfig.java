@@ -74,12 +74,13 @@ public class WebSecurityConfig {
                                     .secure(true)
                                     .path("/")
                                     .maxAge(24 * 60 * 60) //24hr
-                                    .sameSite("strict")
+                                    .sameSite("None")
                                     .build();
                             response.setHeader("Set-Cookie", responseCookie.toString());
 
                             // Redirect to frontend
-                            response.sendRedirect(frontendUrl+"/user/dashboard");
+                            // Even better approach:
+                            response.sendRedirect(frontendUrl+"/oauth-callback?token=" + jwt);
                         }))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
