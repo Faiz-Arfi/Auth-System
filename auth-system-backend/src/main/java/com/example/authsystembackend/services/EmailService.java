@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class EmailService {
     private final JavaMailSender javaMailSender;
 
-    @Value("${FROM_EMAIL}")
+    @Value("${FROM_EMAIL:no-reply@auths.faizarfi.dev}")
     private String fromEmail;
 
     // Inject Base URL to avoid "No Request Context" errors in Async threads
