@@ -32,7 +32,6 @@ function App() {
         const currentUser = await getCurrentUser();
         setUser(currentUser);
       } catch (error) {
-        console.error("Error fetching current user:", error);
         setUser(null);
       }
     }
